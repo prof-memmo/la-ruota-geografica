@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>La Ruota Geografica – Il Gioco della Geografia | Prof. Memmo</title>
+  
+  <meta name="description" content="La Ruota Geografica: Gioco didattico a squadre per esplorare in modo attivo, espressivo e interattivo la geografia generale, l'astronomia e il rapporto uomo-ambiente.">
+  <meta name="theme-color" content="#0ea5e9">
+
+  <!-- Apple iOS Safari & PWA Icons -->
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+  <link rel="manifest" href="manifest.json">
+  <meta name="apple-mobile-web-app-title" content="Ruota Geografica">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+
+  <!-- Google Fonts: Outfit per Titoli & Inter per UI -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <link rel="stylesheet" href="css/style.css?v=20261017_1">
+
+  <!-- Identità Gioco & Guardie Ecosistema Prof. Memmo -->
+  <script>window.HUB_GAME_ID = "la-ruota-geografica";</script>
+  <script src="https://prof-memmo.github.io/prof-memmo-gestione-siti/shared/hub-subscription-guard.js?v=20261017_ruota_guard"></script>
+  <script src="https://prof-memmo.github.io/prof-memmo-gestione-siti/shared/legal-modal.js?v=20261017_ruota_legal"></script>
+
+  <!-- Firebase SDKs Centralizzati (prof-memmo-hub) -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-init.js"></script>
+</head>
+<body>
+
+  <!-- HEADER DELL'ECOSISTEMA (BRAND UNIFORME) -->
+  <header class="app-header" id="main-app-header">
+    <!-- Sinistra: Logo Header del Gioco -->
+    <div class="header-left">
+      <img src="assets/branding/la-ruota-geografica-header.png" alt="Logo La Ruota Geografica" class="header-game-logo" id="btnLogoHome" onclick="App.showView('view-game')">
+    </div>
+
+    <!-- Centro: Logo Avatar Prof. Memmo Centrato -->
+    <div class="header-center-logo">
+      <div class="header-prof-logo-wrapper" onclick="App.showView('view-game')" title="Torna al Gioco">
+        <img src="https://prof-memmo.github.io/prof-memmo-gestione-siti/shared/assets/branding/prof-memmo/avatar.png" class="header-prof-logo" alt="Prof. Memmo Avatar">
+      </div>
+    </div>
+
+    <!-- Destra: Pillola Profilo Utente & Accesso Docente SSO -->
+    <div class="header-right">
+      <div class="user-menu-container">
+        <!-- Trigger Pill -->
+        <div class="user-menu-trigger" id="user-menu-trigger" onclick="App.toggleUserDropdown(event)">
+          <div class="user-avatar-circle">
+            <img id="header-user-avatar" src="https://prof-memmo.github.io/prof-memmo-gestione-siti/shared/assets/avatars/6.png" alt="Avatar" onerror="this.src='https://prof-memmo.github.io/prof-memmo-gestione-siti/shared/assets/branding/prof-memmo/prof-memmo-avatar.png'">
+          </div>
+          <div class="user-trigger-text">
+            <span class="user-trigger-name" id="header-user-name">PROF. MEMMO</span>
+            <span class="user-trigger-role" id="header-user-role">AMMINISTRATORE</span>
+          </div>
+          <span class="user-trigger-chevron"><i class="fa-solid fa-chevron-down"></i></span>
+        </div>
+
+        <!-- Dropdown Card Integrata -->
+        <div class="user-dropdown hidden" id="user-dropdown">
+          <div class="dropdown-user-header">
+            <div class="dropdown-user-title" id="dropdown-user-name">PROF. MEMMO</div>
+            <div class="dropdown-user-subtitle" id="dropdown-user-role-sub">AMMINISTRATORE</div>
+          </div>
+
+          <!-- Sottofondo Music Player Widget -->
+          <div class="dropdown-music-box">
+            <div class="music-header">
+              <span class="music-label"><i class="fa-solid fa-music"></i> SOTTOFONDO</span>
+              <a href="https://freetouse.com/music" target="_blank" class="music-link">FREETOUSE.COM/MUSIC</a>
+            </div>
+            <div class="music-capsule">
+              <span class="music-track-title" id="music-track-title">Aventure - Close Friends</span>
+              <div class="music-btns">
+                <button class="music-btn-icon" onclick="AudioEngine.prevTrack()" title="Precedente"><i class="fa-solid fa-backward-step"></i></button>
+                <button class="music-play-btn" id="music-play-btn" onclick="AudioEngine.togglePlay()" title="Play/Pausa"><i class="fa-solid fa-play"></i></button>
+                <button class="music-btn-icon" onclick="AudioEngine.nextTrack()" title="Successiva"><i class="fa-solid fa-forward-step"></i></button>
+              </div>
+            </div>
+          </div>
+
+          <button class="dropdown-pill-btn" onclick="window.open('https://prof-memmo.github.io/games/profilo.html', '_blank')">
+            <i class="fa-solid fa-user-gear"></i> Gestisci Profilo Hub
+          </button>
+
+          <button class="dropdown-pill-btn" onclick="if(window.openSharedModal) window.openSharedModal('invita');">
+            <i class="fa-solid fa-paper-plane"></i> Invita un Collega
+          </button>
+
+          <div class="dropdown-split-row">
+            <button class="dropdown-pill-btn" onclick="if(window.openSharedModal) window.openSharedModal('privacy');">
+              <i class="fa-solid fa-shield"></i> Privacy
+            </button>
+            <button class="dropdown-pill-btn" onclick="if(window.openSharedModal) window.openSharedModal('termini');">
+              <i class="fa-solid fa-scroll"></i> Termini
+            </button>
+          </div>
+
+          <button class="dropdown-pill-btn" onclick="if(window.openSharedModal) window.openSharedModal('contatti');">
+            <i class="fa-solid fa-envelope"></i> Contatti
+          </button>
+
+          <div class="dropdown-bottom-row">
+            <button class="dropdown-pill-btn btn-disattiva-musica" id="music-mute-toggle-btn" onclick="AudioEngine.toggleMute()">
+              <i class="fa-solid fa-volume-high"></i> Disattiva Audio
+            </button>
+            <button class="dropdown-pill-btn btn-esci-red" onclick="window.location.href='https://prof-memmo.github.io/games/'">
+              <i class="fa-solid fa-power-off"></i> Vetrina
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- CONTENITORE PRINCIPALE VISTE -->
+  <main class="main-wrapper">
+
+    <!-- 1. VIEW: IL GIOCO (PLANCIA E RUOTA) -->
+    <section id="view-game" class="app-view">
+      <!-- Banner di Stato -->
+      <div class="turn-status-banner" id="turn-status-banner">
+        <i class="fa-solid fa-compass" style="color: var(--accent-geo);"></i>
+        <span>Scegli se attivare la Ruota Modalità o giocare in modalità FREE.</span>
+      </div>
+
+      <div class="game-play-area">
+        <!-- Box Ruota Interattiva -->
+        <div class="wheel-container-card" id="wheel-section-box">
+          
+          <!-- Scelta iniziale modalità di turno -->
+          <div id="step-choose-mode" class="wheel-controls-box" style="margin-top: 0; margin-bottom: 20px;">
+            <div class="btn-choice-group">
+              <button class="btn-choice" onclick="App.startWithFreeMode()">
+                <span class="emoji">▶️</span>
+                <span>Modalità FREE</span>
+                <small>Gioca subito senza modificatori</small>
+              </button>
+              <button class="btn-choice" onclick="App.prepareSpinModeWheel()" style="border-color: rgba(14, 165, 233, 0.4);">
+                <span class="emoji">🎡</span>
+                <span>Ruota Modalità</span>
+                <small>Attiva imprevisti o moltiplicatori</small>
+              </button>
+            </div>
+          </div>
+
+          <!-- Canvas Ruota Interattiva -->
+          <canvas id="wheel-canvas" onclick="App.handleSpinButtonClick()" title="Clicca per far girare la ruota!"></canvas>
+
+          <!-- Pulsantone di Giro Ruota -->
+          <div id="step-spin-controls" class="wheel-controls-box hidden">
+            <button class="btn-primary-glow" id="btn-spin-wheel" onclick="App.handleSpinButtonClick()">
+              🎡 GIRA LA RUOTA CATEGORIE
+            </button>
+            <button class="btn-choice" onclick="App.resetTurn()" style="padding: 10px; font-size: 0.85rem;">
+              <i class="fa-solid fa-rotate-left"></i> Cambia Scelta Turno
+            </button>
+          </div>
+        </div>
+
+        <!-- Box Carta Prova Estratta (Inizialmente nascosto) -->
+        <div id="challenge-card-box" class="challenge-card-box hidden">
+          <div class="challenge-header-badges">
+            <span class="badge-tag badge-cat" id="card-badge-cat">🎥 REEL</span>
+            <span class="badge-tag badge-mode" id="card-badge-mode">▶️ FREE</span>
+          </div>
+
+          <div class="timer-capsule">
+            <i class="fa-solid fa-stopwatch" style="color: var(--accent-geo-light);"></i>
+            <span class="timer-count" id="timer-count">45s</span>
+          </div>
+
+          <div class="challenge-prompt-text" id="card-prompt-text">
+            Testo della prova...
+          </div>
+
+          <p class="challenge-instructions" id="card-instructions">
+            Istruzioni per la spiegazione...
+          </p>
+
+          <div style="display: flex; gap: 12px; margin-top: 10px;">
+            <button class="btn-primary-glow" onclick="App.resetTurn()">
+              <i class="fa-solid fa-forward-step"></i> Prossimo Turno
+            </button>
+          </div>
+        </div>
+
+        <!-- Tabellone Squadre e Punteggi -->
+        <div class="scoreboard-section">
+          <div class="scoreboard-header">
+            <div class="scoreboard-title">
+              <i class="fa-solid fa-trophy" style="color: var(--accent-gold);"></i> Tabellone Squadre
+            </div>
+            <button class="score-btn" onclick="App.addTeam()" title="Aggiungi Squadra" style="width: auto; padding: 4px 10px; font-size: 0.75rem;">
+              <i class="fa-solid fa-plus"></i> Squadra
+            </button>
+          </div>
+          <div class="teams-list-grid" id="scoreboard-teams-list">
+            <!-- Popolato dinamicamente da App.renderScoreboard() -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. VIEW: REGOLAMENTO UFFICIALE -->
+    <section id="view-regolamento" class="app-view hidden">
+      <div class="page-title-box">
+        <h1 class="page-title">📜 Regolamento Ufficiale</h1>
+        <p class="page-subtitle">Norme pedagogiche, meccaniche di turno e linguaggi espressivi de La Ruota Geografica</p>
+        <div style="margin-top: 14px;">
+          <button id="btn-open-rules-editor" class="dropdown-pill-btn hidden" style="display: inline-flex; width: auto; background: var(--accent-geo); color: #ffffff; padding: 8px 20px;" onclick="App.openRulesEditor()">
+            <i class="fa-solid fa-pen-to-square"></i> Modifica Regolamento (Super-Admin)
+          </button>
+        </div>
+      </div>
+
+      <div id="rules-content-box" style="max-width: 820px; margin: 0 auto; width: 100%;">
+        <!-- Popolato dinamicamente da RulesService.renderToContainer() -->
+      </div>
+    </section>
+
+    <!-- 3. VIEW: CATTEDRA DOCENTE / ARCHIVIO 192 PROVE -->
+    <section id="view-cattedra" class="app-view hidden">
+      <div class="page-title-box">
+        <h1 class="page-title">👨‍🏫 Cattedra & Strumenti Docente</h1>
+        <p class="page-subtitle">Selettore guidato per la modalità "IL PROF." e archivio completo delle 192 prove</p>
+      </div>
+
+      <!-- Scelta Rapida Categoria Docente -->
+      <div class="scoreboard-section" style="max-width: 820px; margin: 0 auto;">
+        <h3 style="color: #ffffff; margin-bottom: 12px; font-size: 1.1rem; display: flex; align-items: center; gap: 8px;">
+          <i class="fa-solid fa-hand-pointer" style="color: var(--accent-geo);"></i> Assegna Categoria alla Classe ("IL PROF.")
+        </h3>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 16px;">
+          Clicca su una delle 8 categorie per estrarre direttamente una sfida mirata per la squadra di turno:
+        </p>
+        <div class="manual-picker-grid">
+          <div class="manual-cat-item" onclick="App.extractAndShowChallenge(WHEEL_CATEGORIES[0]); App.showView('view-game');"><span>🎥</span><strong>REEL</strong></div>
+          <div class="manual-cat-item" onclick="App.extractAndShowChallenge(WHEEL_CATEGORIES[1]); App.showView('view-game');"><span>🧠</span><strong>QUIZ</strong></div>
+          <div class="manual-cat-item" onclick="App.extractAndShowChallenge(WHEEL_CATEGORIES[2]); App.showView('view-game');"><span>💃</span><strong>MIMO</strong></div>
+          <div class="manual-cat-item" onclick="App.extractAndShowChallenge(WHEEL_CATEGORIES[3]); App.showView('view-game');"><span>😂</span><strong>MEME</strong></div>
+          <div class="manual-cat-item" onclick="App.extractAndShowChallenge(WHEEL_CATEGORIES[4]); App.showView('view-game');"><span>🎙</span><strong>PODCAST</strong></div>
+          <div class="manual-cat-item" onclick="App.extractAndShowChallenge(WHEEL_CATEGORIES[5]); App.showView('view-game');"><span>🎨</span><strong>CREATIVITÀ</strong></div>
+          <div class="manual-cat-item" onclick="App.extractAndShowChallenge(WHEEL_CATEGORIES[6]); App.showView('view-game');"><span>⚡</span><strong>DISEGNO</strong></div>
+          <div class="manual-cat-item" onclick="App.extractAndShowChallenge(WHEEL_CATEGORIES[7]); App.showView('view-game');"><span>🔍</span><strong>SCOPERTA</strong></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER DI COPYRIGHT PATAMU (ALTEZZA ESATTA 52PX) -->
+    <footer class="view-footer-copyright">
+      <div class="footer-legal-links">
+        <a href="javascript:void(0)" onclick="if(window.openSharedModal) window.openSharedModal('privacy');">Privacy Policy</a>
+        <a href="javascript:void(0)" onclick="if(window.openSharedModal) window.openSharedModal('termini');">Termini e Condizioni</a>
+        <a href="javascript:void(0)" onclick="if(window.openSharedModal) window.openSharedModal('contatti');">Contatti</a>
+      </div>
+      <div class="footer-badge-text-row">
+        <img src="https://prof-memmo.github.io/prof-memmo-gestione-siti/shared/assets/legal/patamu-badge.png" alt="Patamu" class="patamu-footer-badge">
+        <p class="footer-copy">
+          &copy; 2026 Guglielmo Piersanti. Tutti i contenuti presenti su questo sito sono di proprietà dell'autore e sono protetti tramite deposito e marcatura temporale presso Patamu. I contenuti sono inoltre distribuiti con licenza Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0).
+        </p>
+      </div>
+    </footer>
+
+  </main>
+
+  <!-- BOTTOM DOCK NAVIGATION BAR (64PX) -->
+  <nav class="bottom-bar">
+    <a href="#" class="tab-item active" data-view="view-game" onclick="App.showView('view-game'); return false;">
+      <i class="fa-solid fa-compass"></i>
+      <span>La Ruota</span>
+    </a>
+    <a href="#" class="tab-item" data-view="view-regolamento" onclick="App.showView('view-regolamento'); return false;">
+      <i class="fa-solid fa-scale-balanced"></i>
+      <span>Regolamento</span>
+    </a>
+    <a href="#" class="tab-item" data-view="view-cattedra" onclick="App.showView('view-cattedra'); return false;">
+      <i class="fa-solid fa-chalkboard-user"></i>
+      <span>Cattedra</span>
+    </a>
+  </nav>
+
+  <!-- MODALE: ESITO RUOTA MODALITÀ -->
+  <div id="mode-outcome-modal" class="app-modal-overlay hidden">
+    <div class="app-modal-content" style="text-align: center;">
+      <span class="close-modal-btn" onclick="document.getElementById('mode-outcome-modal').classList.add('hidden')">&times;</span>
+      <div style="font-size: 3rem; margin-bottom: 12px;" id="mode-outcome-emoji">✨</div>
+      <h2 style="font-family: var(--font-heading); color: var(--accent-geo-light); margin-bottom: 10px;" id="mode-outcome-title">Modalità Estratta</h2>
+      <p style="color: var(--text-muted); font-size: 1.05rem; line-height: 1.5; margin-bottom: 24px;" id="mode-outcome-desc">Descrizione della modalità...</p>
+      <button class="btn-primary-glow" onclick="App.confirmModeAndProceed()">
+        Continua alla Ruota Categorie ➔
+      </button>
+    </div>
+  </div>
+
+  <!-- MODALE: SELETTORE MANUALE CATEGORIA -->
+  <div id="manual-category-modal" class="app-modal-overlay hidden">
+    <div class="app-modal-content">
+      <span class="close-modal-btn" onclick="document.getElementById('manual-category-modal').classList.add('hidden')">&times;</span>
+      <h3 style="font-family: var(--font-heading); color: #ffffff; margin-bottom: 8px;" id="manual-picker-title">Seleziona Categoria</h3>
+      <p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 16px;">Scegli la categoria su cui affrontare la prova di questo turno:</p>
+      <div class="manual-picker-grid" id="manual-picker-list"></div>
+    </div>
+  </div>
+
+  <!-- MODALE: LIVE EDITOR REGOLAMENTO (SUPER-ADMIN) -->
+  <div id="rules-editor-modal" class="app-modal-overlay hidden">
+    <div class="app-modal-content" style="max-width: 680px;">
+      <span class="close-modal-btn" onclick="App.closeRulesEditor()">&times;</span>
+      <h3 style="color: var(--accent-geo-light); font-family: var(--font-heading); margin-bottom: 10px;">
+        <i class="fa-solid fa-pen-to-square"></i> Editor Regolamento La Ruota Geografica
+      </h3>
+      <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 12px;">
+        Modifica il testo ufficiale. Ogni blocco numerato (es. <code>1. Titolo</code>) genererà automaticamente una card nell'interfaccia.
+      </p>
+      <textarea id="rules-editor-textarea" style="width: 100%; height: 350px; background: #070a13; color: #f8fafc; border: 1px solid var(--border-subtle); border-radius: 12px; padding: 14px; font-family: monospace; font-size: 0.88rem; line-height: 1.5; resize: vertical; margin-bottom: 16px;"></textarea>
+      <div style="display: flex; justify-content: flex-end; gap: 10px;">
+        <button class="dropdown-pill-btn" style="width: auto; padding: 8px 18px;" onclick="App.closeRulesEditor()">Annulla</button>
+        <button class="btn-primary-glow" style="width: auto; padding: 8px 24px;" onclick="App.saveRulesEditor()">Salva sul Cloud</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODALE LEGALE CONDIVISO ECOSYSTEM -->
+  <div id="legal-modal" class="app-modal-overlay hidden">
+    <div class="app-modal-content">
+      <span class="close-modal-btn" onclick="document.getElementById('legal-modal').classList.add('hidden')">&times;</span>
+      <h3 id="legal-modal-title" style="color: var(--accent-geo-light); margin-bottom: 15px;">Informativa</h3>
+      <div id="legal-modal-body" style="font-size: 0.88rem; color: #cbd5e1; line-height: 1.5; max-height: 55vh; overflow-y: auto; margin-bottom: 20px;">
+        Caricamento informativa...
+      </div>
+      <button class="btn-primary-glow" onclick="document.getElementById('legal-modal').classList.add('hidden')">Ho Capito</button>
+    </div>
+  </div>
+
+  <!-- Scripts dell'Applicazione -->
+  <script src="js/music.js?v=20261017_3"></script>
+  <script src="js/cards-data.js?v=20261017_3"></script>
+  <script src="js/wheel-engine.js?v=20261017_3"></script>
+  <script src="js/rules-service.js?v=20261017_3"></script>
+  <script src="js/app.js?v=20261017_3"></script>
+</body>
+</html>

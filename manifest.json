@@ -1,0 +1,20 @@
+{
+  "name": "La Ruota Geografica – Il Gioco della Geografia",
+  "short_name": "Ruota Geografica",
+  "description": "Gioco didattico a squadre per esplorare e spiegare la geografia generale in modo attivo e coinvolgente",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0b0f19",
+  "theme_color": "#0ea5e9",
+  "categories": ["education", "games"],
+  "icons": [
+    {
+      "src": "./apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
