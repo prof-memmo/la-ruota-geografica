@@ -22,7 +22,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Julius+Sans+One&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-  <link rel="stylesheet" href="css/style.css?v=20261018_julius_white">
+  <link rel="stylesheet" href="css/style.css?v=20261018_profile_sso">
 
   <!-- Identità Gioco & Guardie Ecosistema Prof. Memmo -->
   <script>window.HUB_GAME_ID = "la-ruota-geografica";</script>
@@ -60,8 +60,8 @@
             <img id="header-user-avatar" src="https://prof-memmo.github.io/prof-memmo-gestione-siti/shared/assets/avatars/6.png" alt="Avatar" onerror="this.src='https://prof-memmo.github.io/prof-memmo-gestione-siti/shared/assets/branding/prof-memmo/prof-memmo-avatar.png'">
           </div>
           <div class="user-trigger-text">
-            <span class="user-trigger-name" id="header-user-name">PROF. MEMMO</span>
-            <span class="user-trigger-role" id="header-user-role">AMMINISTRATORE</span>
+            <span class="user-trigger-name" id="header-user-name">ACCEDI</span>
+            <span class="user-trigger-role" id="header-user-role">OSPITE</span>
           </div>
           <span class="user-trigger-chevron"><i class="fa-solid fa-chevron-down"></i></span>
         </div>
@@ -69,8 +69,8 @@
         <!-- Dropdown Card Integrata -->
         <div class="user-dropdown hidden" id="user-dropdown">
           <div class="dropdown-user-header">
-            <div class="dropdown-user-title" id="dropdown-user-name">PROF. MEMMO</div>
-            <div class="dropdown-user-subtitle" id="dropdown-user-role-sub">AMMINISTRATORE</div>
+            <div class="dropdown-user-title" id="dropdown-user-name">ACCESSO DOCENTE</div>
+            <div class="dropdown-user-subtitle" id="dropdown-user-role-sub">ECOSISTEMA PROF. MEMMO</div>
           </div>
 
           <!-- Sottofondo Music Player Widget -->
@@ -89,8 +89,19 @@
             </div>
           </div>
 
-          <button class="dropdown-pill-btn" onclick="window.open('https://prof-memmo.github.io/games/profilo.html', '_blank')">
+          <!-- Pulsante Login Hub (visibile se non autenticato) -->
+          <button class="dropdown-pill-btn btn-login-green" id="btn-login-hub-dropdown" onclick="App.goToUnifiedLogin()">
+            <i class="fa-solid fa-right-to-bracket"></i> Accedi tramite Hub
+          </button>
+
+          <!-- Pulsante Profilo Hub (visibile se autenticato) -->
+          <button class="dropdown-pill-btn hidden" id="btn-profile-dropdown" onclick="window.open('https://prof-memmo.github.io/games/profilo.html', '_blank')">
             <i class="fa-solid fa-user-gear"></i> Gestisci Profilo Hub
+          </button>
+
+          <!-- Pulsante Pannello Super-Admin (visibile per prof.memmo@gmail.com o admin) -->
+          <button class="dropdown-pill-btn btn-admin-gold hidden" id="btn-admin-dropdown" onclick="App.showView('view-admin')">
+            <i class="fa-solid fa-crown"></i> Pannello Super-Admin
           </button>
 
           <button class="dropdown-pill-btn" onclick="if(window.openSharedModal) window.openSharedModal('invita');">
@@ -114,8 +125,8 @@
             <button class="dropdown-pill-btn btn-disattiva-musica" id="music-mute-toggle-btn" onclick="AudioEngine.toggleMute()">
               <i class="fa-solid fa-volume-high"></i> Disattiva Audio
             </button>
-            <button class="dropdown-pill-btn btn-esci-red" onclick="window.location.href='https://prof-memmo.github.io/games/'">
-              <i class="fa-solid fa-power-off"></i> Vetrina
+            <button class="dropdown-pill-btn btn-esci-red" id="btn-logout-dropdown" onclick="App.confirmLogout()">
+              <i class="fa-solid fa-power-off"></i> Esci
             </button>
           </div>
         </div>
@@ -404,10 +415,10 @@
   </div>
 
   <!-- Scripts dell'Applicazione -->
-  <script src="js/music.js?v=20261018_miniguida"></script>
-  <script src="js/cards-data.js?v=20261018_miniguida"></script>
-  <script src="js/wheel-engine.js?v=20261018_miniguida"></script>
-  <script src="js/rules-service.js?v=20261018_miniguida"></script>
-  <script src="js/app.js?v=20261018_miniguida"></script>
+  <script src="js/music.js?v=20261018_profile_sso"></script>
+  <script src="js/cards-data.js?v=20261018_profile_sso"></script>
+  <script src="js/wheel-engine.js?v=20261018_profile_sso"></script>
+  <script src="js/rules-service.js?v=20261018_profile_sso"></script>
+  <script src="js/app.js?v=20261018_profile_sso"></script>
 </body>
 </html>

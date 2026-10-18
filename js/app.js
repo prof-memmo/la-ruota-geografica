@@ -357,37 +357,167 @@ const App = {
   },
 
   /* -------------------------------------------------------------
-   * Header Profile SSO
+   * Header Profile & Firebase Auth SSO
    * ------------------------------------------------------------- */
-  setupHeaderProfile() {
-    const candidateKeys = ['currentUser', 'user', 'teacherUser', 'hub_user', 'eroi_user_profile'];
-    let user = null;
-    for (const k of candidateKeys) {
-      try {
-        const raw = localStorage.getItem(k);
-        if (raw) {
-          user = JSON.parse(raw);
-          if (user && (user.name || user.email)) break;
-        }
-      } catch (e) {}
-    }
+  currentUser: null,
 
+  isSuperAdminUser() {
+    if (this.currentUser && this.currentUser.email && this.currentUser.email.toLowerCase() === 'prof.memmo@gmail.com') return true;
+    if (window.RulesService && window.RulesService.isSuperAdmin && window.RulesService.isSuperAdmin()) return true;
+    const hubRole = localStorage.getItem('hub_user_role');
+    if (hubRole === 'admin' || hubRole === 'AMMINISTRATORE') return true;
+    return false;
+  },
+
+  setupHeaderProfile() {
     const nameEl = document.getElementById('header-user-name');
     const roleEl = document.getElementById('header-user-role');
     const dropNameEl = document.getElementById('dropdown-user-name');
     const dropRoleEl = document.getElementById('dropdown-user-role-sub');
     const avatarEl = document.getElementById('header-user-avatar');
+    const btnLogin = document.getElementById('btn-login-hub-dropdown');
+    const btnProfile = document.getElementById('btn-profile-dropdown');
+    const btnAdmin = document.getElementById('btn-admin-dropdown');
+    const btnLogout = document.getElementById('btn-logout-dropdown');
 
-    if (user && (user.name || user.email)) {
-      const name = (user.name || user.email.split('@')[0]).toUpperCase();
-      const role = (user.role || (user.email === 'prof.memmo@gmail.com' ? 'Super-Admin' : 'Docente')).toUpperCase();
+    const applyProfileData = (name, role, avatar, isAuth, isSuperAdmin) => {
       if (nameEl) nameEl.textContent = name;
-      if (roleEl) roleEl.textContent = role;
       if (dropNameEl) dropNameEl.textContent = name;
+      if (roleEl) roleEl.textContent = role;
       if (dropRoleEl) dropRoleEl.textContent = role;
-      if (avatarEl && user.avatar) avatarEl.src = user.avatar;
+      if (avatarEl && avatar) avatarEl.src = avatar;
+
+      if (isAuth) {
+        if (btnLogin) btnLogin.classList.add('hidden');
+        if (btnProfile) btnProfile.classList.remove('hidden');
+        if (btnLogout) btnLogout.classList.remove('hidden');
+      } else {
+        if (btnLogin) btnLogin.classList.remove('hidden');
+        if (btnProfile) btnProfile.classList.add('hidden');
+      }
+
+      if (isSuperAdmin) {
+        if (btnAdmin) btnAdmin.classList.remove('hidden');
+      } else {
+        if (btnAdmin) btnAdmin.classList.add('hidden');
+      }
+      this.checkLiveEditorButton();
+    };
+
+    // 1. Fallback iniziale da localStorage per reattività immediata
+    const candidateKeys = ['currentUser', 'user', 'teacherUser', 'hub_user', 'eroi_user_profile'];
+    let cachedUser = null;
+    for (const k of candidateKeys) {
+      try {
+        const raw = localStorage.getItem(k);
+        if (raw) {
+          cachedUser = JSON.parse(raw);
+          if (cachedUser && (cachedUser.name || cachedUser.email)) break;
+        }
+      } catch (e) {}
+    }
+
+    if (cachedUser && (cachedUser.name || cachedUser.email)) {
+      const isSuperAdmin = (cachedUser.email && cachedUser.email.toLowerCase() === 'prof.memmo@gmail.com') || cachedUser.role === 'admin';
+      const name = (cachedUser.name || cachedUser.email.split('@')[0]).toUpperCase();
+      const role = (isSuperAdmin ? 'AMMINISTRATORE' : (cachedUser.role || 'DOCENTE')).toUpperCase();
+      const avatar = cachedUser.avatar || localStorage.getItem('hub_user_avatar') || 'https://prof-memmo.github.io/prof-memmo-gestione-siti/shared/assets/avatars/6.png';
+      applyProfileData(name, role, avatar, true, isSuperAdmin);
+    } else {
+      const savedName = localStorage.getItem('hub_user_name');
+      const savedRole = localStorage.getItem('hub_user_role');
+      const savedAvatar = localStorage.getItem('hub_user_avatar');
+      if (savedName) {
+        const isSuperAdmin = savedRole === 'admin' || savedRole === 'AMMINISTRATORE';
+        applyProfileData(savedName.toUpperCase(), (savedRole || 'DOCENTE').toUpperCase(), savedAvatar || 'https://prof-memmo.github.io/prof-memmo-gestione-siti/shared/assets/avatars/6.png', true, isSuperAdmin);
+      } else {
+        applyProfileData('ACCEDI', 'OSPITE', 'https://prof-memmo.github.io/prof-memmo-gestione-siti/shared/assets/avatars/6.png', false, false);
+      }
+    }
+
+    // 2. Ascolto Firebase Auth Centralizzato (prof-memmo-hub)
+    const fbAuth = window.fbAuth || (window.firebase && window.firebase.auth ? window.firebase.auth() : null);
+    if (fbAuth) {
+      fbAuth.onAuthStateChanged(async (user) => {
+        if (user) {
+          this.currentUser = user;
+          const isSuperAdmin = (user.email && user.email.toLowerCase() === 'prof.memmo@gmail.com');
+          let displayName = isSuperAdmin ? 'PROF. MEMMO' : (user.displayName || user.email.split('@')[0]).toUpperCase();
+          let userAvatar = user.photoURL || '';
+          let userRole = isSuperAdmin ? 'AMMINISTRATORE' : 'DOCENTE';
+
+          // Carica da Firestore hub_users
+          const db = window.fbDb || (window.firebase && window.firebase.firestore ? window.firebase.firestore() : null);
+          if (db) {
+            try {
+              let docSnap = await db.collection('hub_users').doc(user.uid).get();
+              if (!docSnap.exists) {
+                docSnap = await db.collection('users').doc(user.uid).get();
+              }
+              if (docSnap.exists) {
+                const data = docSnap.data() || {};
+                if (data.anagrafica && data.anagrafica.nome) {
+                  const cognome = data.anagrafica.cognome ? ` ${data.anagrafica.cognome}` : '';
+                  displayName = `${data.anagrafica.nome}${cognome}`.toUpperCase();
+                } else if (data.nome) {
+                  const cognome = data.cognome ? ` ${data.cognome}` : '';
+                  displayName = `${data.nome}${cognome}`.toUpperCase();
+                } else if (data.displayName) {
+                  displayName = data.displayName.toUpperCase();
+                }
+
+                const rawAvatar = data.avatar || (data.anagrafica && data.anagrafica.avatar) || '';
+                if (rawAvatar) userAvatar = rawAvatar;
+                if (data.role === 'admin' || isSuperAdmin) userRole = 'AMMINISTRATORE';
+              }
+            } catch (err) {
+              console.warn("⚠️ Lettura hub_users Firestore:", err);
+            }
+          }
+
+          if (!userAvatar) {
+            userAvatar = 'https://prof-memmo.github.io/prof-memmo-gestione-siti/shared/assets/avatars/6.png';
+          }
+
+          applyProfileData(displayName, userRole, userAvatar, true, isSuperAdmin);
+
+          try {
+            localStorage.setItem('hub_user_name', displayName);
+            localStorage.setItem('hub_user_role', userRole);
+            localStorage.setItem('hub_user_avatar', userAvatar);
+          } catch(e) {}
+        } else {
+          this.currentUser = null;
+          const savedName = localStorage.getItem('hub_user_name');
+          if (!savedName) {
+            applyProfileData('ACCEDI', 'OSPITE', 'https://prof-memmo.github.io/prof-memmo-gestione-siti/shared/assets/avatars/6.png', false, false);
+          }
+        }
+      });
     }
   },
+
+  goToUnifiedLogin() {
+    window.location.href = 'https://prof-memmo.github.io/prof-memmo-gestione-siti/portal.html';
+  },
+
+  confirmLogout() {
+    if (confirm("Vuoi davvero disconnetterti dall'Ecosistema Prof. Memmo?")) {
+      try {
+        localStorage.removeItem('hub_user_name');
+        localStorage.removeItem('hub_user_role');
+        localStorage.removeItem('hub_user_avatar');
+        localStorage.removeItem('currentUser');
+        localStorage.removeItem('user');
+        localStorage.removeItem('teacherUser');
+        localStorage.removeItem('adminLoggedIn');
+      } catch (e) {}
+      const fbAuth = window.fbAuth || (window.firebase && window.firebase.auth ? window.firebase.auth() : null);
+      if (fbAuth) fbAuth.signOut();
+      window.location.reload();
+    }
+  },
+
 
   toggleUserDropdown(event) {
     if (event) event.stopPropagation();
