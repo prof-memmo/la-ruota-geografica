@@ -479,8 +479,23 @@ const App = {
     }
   },
 
+  getActiveMiniguidaSteps() {
+    if (window.GeoMiniguidaService && typeof window.GeoMiniguidaService.getData === 'function') {
+      const d = window.GeoMiniguidaService.getData();
+      if (d && Array.isArray(d.steps) && d.steps.length > 0) {
+        return d.steps.map(s => ({
+          icon: s.icon || '🎯',
+          title: s.title || '',
+          desc: s.text || s.desc || ''
+        }));
+      }
+    }
+    return this.miniguidaSteps;
+  },
+
   nextMiniguidaStep() {
-    if (this.miniguidaStep < this.miniguidaSteps.length - 1) {
+    const steps = this.getActiveMiniguidaSteps();
+    if (this.miniguidaStep < steps.length - 1) {
       this.miniguidaStep++;
       this.updateMiniguidaView();
     } else {
@@ -496,7 +511,9 @@ const App = {
   },
 
   updateMiniguidaView() {
-    const step = this.miniguidaSteps[this.miniguidaStep];
+    const steps = this.getActiveMiniguidaSteps();
+    if (this.miniguidaStep >= steps.length) this.miniguidaStep = 0;
+    const step = steps[this.miniguidaStep];
     if (!step) return;
     const iconEl = document.getElementById('miniguida-icon');
     const titleEl = document.getElementById('miniguida-step-title');
@@ -505,16 +522,16 @@ const App = {
     const prevBtn = document.getElementById('miniguida-prev-btn');
     const nextBtn = document.getElementById('miniguida-next-btn');
 
-    if (iconEl) iconEl.textContent = step.icon;
+    if (iconEl) iconEl.innerHTML = step.icon;
     if (titleEl) titleEl.textContent = step.title;
     if (descEl) descEl.innerHTML = step.desc;
-    if (counterEl) counterEl.textContent = `Passo ${this.miniguidaStep + 1} di ${this.miniguidaSteps.length}`;
+    if (counterEl) counterEl.textContent = `Passo ${this.miniguidaStep + 1} di ${steps.length}`;
 
     if (prevBtn) {
       prevBtn.style.visibility = (this.miniguidaStep === 0) ? 'hidden' : 'visible';
     }
     if (nextBtn) {
-      nextBtn.textContent = (this.miniguidaStep === this.miniguidaSteps.length - 1) ? 'GIOCA! 🚀' : 'Avanti ➔';
+      nextBtn.textContent = (this.miniguidaStep === steps.length - 1) ? 'GIOCA! 🚀' : 'Avanti ➔';
     }
   },
 
@@ -702,10 +719,56 @@ const App = {
   },
 
   renderAdminView() {
-    const container = document.getElementById('geo-rules-admin-container');
-    if (!container || !window.RulesService) return;
-    if (window.RulesService.renderAdminEditor) {
-      window.RulesService.renderAdminEditor(container);
+    if (window.RulesService && window.RulesService.renderAdminEditor) {
+      window.RulesService.renderAdminEditor('geo-rules-admin-container');
+    }
+    if (window.GeoMiniguidaService && window.GeoMiniguidaService.renderAdminEditor) {
+      window.GeoMiniguidaService.renderAdminEditor('geo-miniguida-admin-container');
+    }
+  },
+
+  switchAdminTab(tab) {
+    const rulesBtn = document.getElementById('btn-tab-geo-rules');
+    const miniBtn = document.getElementById('btn-tab-geo-miniguida');
+    const rulesContent = document.getElementById('geo-rules-tab-content');
+    const miniContent = document.getElementById('geo-miniguida-tab-content');
+
+    if (tab === 'rules') {
+      if (rulesBtn) {
+        rulesBtn.classList.add('active');
+        rulesBtn.style.background = 'var(--accent-geo)';
+        rulesBtn.style.color = '#fff';
+        rulesBtn.style.borderColor = 'var(--accent-geo)';
+      }
+      if (miniBtn) {
+        miniBtn.classList.remove('active');
+        miniBtn.style.background = '#f1f5f9';
+        miniBtn.style.color = '#475569';
+        miniBtn.style.borderColor = 'transparent';
+      }
+      if (rulesContent) rulesContent.style.display = 'block';
+      if (miniContent) miniContent.style.display = 'none';
+      if (window.RulesService && window.RulesService.renderAdminEditor) {
+        window.RulesService.renderAdminEditor('geo-rules-admin-container');
+      }
+    } else if (tab === 'miniguida') {
+      if (miniBtn) {
+        miniBtn.classList.add('active');
+        miniBtn.style.background = 'var(--accent-geo)';
+        miniBtn.style.color = '#fff';
+        miniBtn.style.borderColor = 'var(--accent-geo)';
+      }
+      if (rulesBtn) {
+        rulesBtn.classList.remove('active');
+        rulesBtn.style.background = '#f1f5f9';
+        rulesBtn.style.color = '#475569';
+        rulesBtn.style.borderColor = 'transparent';
+      }
+      if (rulesContent) rulesContent.style.display = 'none';
+      if (miniContent) miniContent.style.display = 'block';
+      if (window.GeoMiniguidaService && window.GeoMiniguidaService.renderAdminEditor) {
+        window.GeoMiniguidaService.renderAdminEditor('geo-miniguida-admin-container');
+      }
     }
   },
 

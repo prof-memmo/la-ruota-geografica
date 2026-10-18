@@ -428,8 +428,26 @@
         </div>
       </div>
 
-      <div id="geo-rules-admin-container" style="max-width: 900px; margin: 0 auto; width: 100%;">
-        <!-- Popolato dinamicamente da RulesService.renderAdminEditor('geo-rules-admin-container') -->
+      <!-- Admin Tabs Standard (Ecosistema Prof. Memmo) -->
+      <div class="admin-tabs-nav" style="display: flex; gap: 10px; margin-bottom: 25px; flex-wrap: wrap; border-bottom: 1px solid var(--border-subtle); padding-bottom: 12px; max-width: 900px; margin-left: auto; margin-right: auto;">
+        <button type="button" class="admin-tab-btn active" id="btn-tab-geo-rules" onclick="App.switchAdminTab('rules')" style="padding: 10px 20px; border-radius: 12px; font-weight: 700; font-size: 0.9rem; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; border: 1.5px solid var(--accent-geo); background: var(--accent-geo); color: #fff; transition: all 0.2s;">
+          <i class="fa-solid fa-scale-balanced"></i> Regolamento
+        </button>
+        <button type="button" class="admin-tab-btn" id="btn-tab-geo-miniguida" onclick="App.switchAdminTab('miniguida')" style="padding: 10px 20px; border-radius: 12px; font-weight: 700; font-size: 0.9rem; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; border: 1.5px solid transparent; background: #f1f5f9; color: #475569; transition: all 0.2s;">
+          <i class="fa-solid fa-circle-question"></i> Miniguida
+        </button>
+      </div>
+
+      <div id="geo-rules-tab-content">
+        <div id="geo-rules-admin-container" style="max-width: 900px; margin: 0 auto; width: 100%;">
+          <!-- Popolato dinamicamente da RulesService.renderAdminEditor('geo-rules-admin-container') -->
+        </div>
+      </div>
+
+      <div id="geo-miniguida-tab-content" style="display: none;">
+        <div id="geo-miniguida-admin-container" style="max-width: 900px; margin: 0 auto; width: 100%;">
+          <!-- Popolato dinamicamente da GeoMiniguidaService.renderAdminEditor('geo-miniguida-admin-container') -->
+        </div>
       </div>
     </section>
 
@@ -553,6 +571,7 @@
   <script src="js/cards-data.js?v=20261018_dual_wheel"></script>
   <script src="js/wheel-engine.js?v=20261018_dual_wheel"></script>
   <script src="js/rules-service.js?v=20261018_dual_wheel"></script>
+  <script src="js/miniguida-service.js?v=20261018_dual_wheel"></script>
   <script src="js/app.js?v=20261018_dual_wheel"></script>
 </body>
 </html>
