@@ -72,6 +72,10 @@ const App = {
       }
     });
 
+    if (viewId === 'view-tabellone') {
+      this.renderScoreboard();
+    }
+
     if (viewId === 'view-regolamento' && window.RulesService) {
       const rulesContainer = document.getElementById('rules-content-box');
       if (rulesContainer) {
@@ -167,7 +171,12 @@ const App = {
       return;
     }
 
-    if (this.currentMode.id === 'scegli_tu' || this.currentMode.id === 'amico' || this.currentMode.id === 'il_prof') {
+    if (this.currentMode.id === 'il_prof') {
+      this.showView('view-cattedra');
+      return;
+    }
+
+    if (this.currentMode.id === 'scegli_tu' || this.currentMode.id === 'amico') {
       this.openManualCategoryPicker(this.currentMode.name);
       return;
     }
@@ -322,6 +331,13 @@ const App = {
   renameTeam(teamIndex, newName) {
     if (this.teams[teamIndex] && newName.trim()) {
       this.teams[teamIndex].name = newName.trim();
+    }
+  },
+
+  resetScores() {
+    if (confirm("Vuoi azzerare i punteggi di tutte le squadre?")) {
+      this.teams.forEach(t => t.score = 0);
+      this.renderScoreboard();
     }
   },
 

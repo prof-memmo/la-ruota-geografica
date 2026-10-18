@@ -195,24 +195,41 @@
           </div>
         </div>
 
-        <!-- Tabellone Squadre e Punteggi -->
-        <div class="scoreboard-section">
-          <div class="scoreboard-header">
-            <div class="scoreboard-title">
-              <i class="fa-solid fa-trophy" style="color: var(--accent-gold);"></i> Tabellone Squadre
-            </div>
-            <button class="score-btn" onclick="App.addTeam()" title="Aggiungi Squadra" style="width: auto; padding: 4px 10px; font-size: 0.75rem;">
-              <i class="fa-solid fa-plus"></i> Squadra
-            </button>
-          </div>
-          <div class="teams-list-grid" id="scoreboard-teams-list">
-            <!-- Popolato dinamicamente da App.renderScoreboard() -->
-          </div>
         </div>
       </div>
     </section>
 
-    <!-- 2. VIEW: REGOLAMENTO UFFICIALE -->
+    <!-- 2. VIEW: TABELLONE SQUADRE (PAGINA AUTONOMA) -->
+    <section id="view-tabellone" class="app-view hidden">
+      <div class="page-title-box">
+        <h1 class="page-title">🏆 Tabellone Squadre</h1>
+        <p class="page-subtitle">Gestione punteggi, sfide tra gruppi e classifica di classe in tempo reale</p>
+      </div>
+
+      <div class="scoreboard-section" style="max-width: 680px; margin: 0 auto; width: 100%;">
+        <div class="scoreboard-header">
+          <div class="scoreboard-title">
+            <i class="fa-solid fa-trophy" style="color: var(--accent-gold);"></i> Punteggi di Partita
+          </div>
+          <button class="btn-primary-glow" onclick="App.addTeam()" style="width: auto; padding: 8px 18px; font-size: 0.85rem;">
+            <i class="fa-solid fa-plus"></i> Nuova Squadra
+          </button>
+        </div>
+        <div class="teams-list-grid" id="scoreboard-teams-list">
+          <!-- Popolato dinamicamente da App.renderScoreboard() -->
+        </div>
+        <div style="margin-top: 24px; display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
+          <button class="btn-choice" onclick="App.resetScores()" style="padding: 10px 20px; font-size: 0.85rem; width: auto; flex-direction: row; gap: 8px;">
+            <i class="fa-solid fa-rotate-left"></i> Azzera Punteggi
+          </button>
+          <button class="btn-primary-glow" onclick="App.showView('view-game')" style="width: auto; padding: 10px 24px; font-size: 0.9rem;">
+            <i class="fa-solid fa-gamepad"></i> Torna alla Ruota
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. VIEW: REGOLAMENTO UFFICIALE -->
     <section id="view-regolamento" class="app-view hidden">
       <div class="page-title-box">
         <h1 class="page-title">📜 Regolamento Ufficiale</h1>
@@ -229,20 +246,20 @@
       </div>
     </section>
 
-    <!-- 3. VIEW: CATTEDRA DOCENTE / ARCHIVIO 192 PROVE -->
+    <!-- 4. VIEW: CATTEDRA DOCENTE (ATTIVATA DINAMICAMENTE DA "IL PROF.") -->
     <section id="view-cattedra" class="app-view hidden">
       <div class="page-title-box">
-        <h1 class="page-title">👨‍🏫 Cattedra & Strumenti Docente</h1>
-        <p class="page-subtitle">Selettore guidato per la modalità "IL PROF." e archivio completo delle 192 prove</p>
+        <h1 class="page-title">👨‍🏫 Scelta Docente ("IL PROF.")</h1>
+        <p class="page-subtitle">La ruota ha assegnato il turno al Professore! Seleziona la categoria su cui mettere alla prova la squadra:</p>
       </div>
 
       <!-- Scelta Rapida Categoria Docente -->
-      <div class="scoreboard-section" style="max-width: 820px; margin: 0 auto;">
-        <h3 style="color: #ffffff; margin-bottom: 12px; font-size: 1.1rem; display: flex; align-items: center; gap: 8px;">
-          <i class="fa-solid fa-hand-pointer" style="color: var(--accent-geo);"></i> Assegna Categoria alla Classe ("IL PROF.")
+      <div class="scoreboard-section" style="max-width: 820px; margin: 0 auto; width: 100%;">
+        <h3 style="color: #0f172a; margin-bottom: 12px; font-size: 1.1rem; display: flex; align-items: center; gap: 8px;">
+          <i class="fa-solid fa-hand-pointer" style="color: var(--accent-geo);"></i> Assegna Categoria alla Squadra
         </h3>
-        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 16px;">
-          Clicca su una delle 8 categorie per estrarre direttamente una sfida mirata per la squadra di turno:
+        <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 16px;">
+          Clicca su una delle 8 categorie per estrarre direttamente la sfida mirata:
         </p>
         <div class="manual-picker-grid">
           <div class="manual-cat-item" onclick="App.extractAndShowChallenge(WHEEL_CATEGORIES[0]); App.showView('view-game');"><span>🎥</span><strong>REEL</strong></div>
@@ -253,6 +270,11 @@
           <div class="manual-cat-item" onclick="App.extractAndShowChallenge(WHEEL_CATEGORIES[5]); App.showView('view-game');"><span>🎨</span><strong>CREATIVITÀ</strong></div>
           <div class="manual-cat-item" onclick="App.extractAndShowChallenge(WHEEL_CATEGORIES[6]); App.showView('view-game');"><span>⚡</span><strong>DISEGNO</strong></div>
           <div class="manual-cat-item" onclick="App.extractAndShowChallenge(WHEEL_CATEGORIES[7]); App.showView('view-game');"><span>🔍</span><strong>SCOPERTA</strong></div>
+        </div>
+        <div style="margin-top: 20px; text-align: center;">
+          <button class="btn-choice" onclick="App.showView('view-game')" style="display: inline-flex; width: auto; padding: 10px 20px; font-size: 0.85rem; flex-direction: row; gap: 8px;">
+            <i class="fa-solid fa-arrow-left"></i> Annulla e Torna al Gioco
+          </button>
         </div>
       </div>
     </section>
@@ -279,13 +301,13 @@
       <i class="fa-solid fa-compass"></i>
       <span>La Ruota</span>
     </a>
+    <a href="#" class="tab-item" data-view="view-tabellone" onclick="App.showView('view-tabellone'); return false;">
+      <i class="fa-solid fa-trophy"></i>
+      <span>Tabellone</span>
+    </a>
     <a href="#" class="tab-item" data-view="view-regolamento" onclick="App.showView('view-regolamento'); return false;">
       <i class="fa-solid fa-scale-balanced"></i>
       <span>Regolamento</span>
-    </a>
-    <a href="#" class="tab-item" data-view="view-cattedra" onclick="App.showView('view-cattedra'); return false;">
-      <i class="fa-solid fa-chalkboard-user"></i>
-      <span>Cattedra</span>
     </a>
   </nav>
 
