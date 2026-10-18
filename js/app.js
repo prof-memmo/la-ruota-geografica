@@ -510,7 +510,11 @@ const App = {
   },
 
   goToUnifiedLogin() {
-    window.location.href = 'https://prof-memmo.github.io/prof-memmo-gestione-siti/portal.html';
+    const isPreview = window.location.pathname.includes('/preview');
+    const portalUrl = isPreview
+      ? 'https://prof-memmo.github.io/prof-memmo-gestione-siti/preview/portal.html?redirect=la-ruota-geografica'
+      : 'https://prof-memmo.github.io/prof-memmo-gestione-siti/portal.html?redirect=la-ruota-geografica';
+    window.location.href = portalUrl;
   },
 
   confirmLogout() {
