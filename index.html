@@ -22,7 +22,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Julius+Sans+One&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-  <link rel="stylesheet" href="css/style.css?v=20261018_profile_sso">
+  <link rel="stylesheet" href="css/style.css?v=20261018_dual_wheel_standard">
 
   <!-- Identità Gioco & Guardie Ecosistema Prof. Memmo -->
   <script>window.HUB_GAME_ID = "la-ruota-geografica";</script>
@@ -41,12 +41,12 @@
   <header class="app-header" id="main-app-header">
     <!-- Sinistra: Logo Header del Gioco -->
     <div class="header-left">
-      <img src="assets/branding/la-ruota-geografica-header.png" alt="Logo La Ruota Geografica" class="header-game-logo" id="btnLogoHome" onclick="App.showView('view-game')">
+      <img src="assets/branding/la-ruota-geografica-header.png" alt="Logo La Ruota Geografica" class="header-game-logo" id="btnLogoHome" onclick="App.showView('view-welcome')">
     </div>
 
     <!-- Centro: Logo Avatar Prof. Memmo Centrato -->
     <div class="header-center-logo">
-      <div class="header-prof-logo-wrapper" onclick="App.showView('view-game')" title="Torna al Gioco">
+      <div class="header-prof-logo-wrapper" onclick="App.showView('view-welcome')" title="Torna alla Home">
         <img src="https://prof-memmo.github.io/prof-memmo-gestione-siti/shared/assets/branding/prof-memmo/avatar.png" class="header-prof-logo" alt="Prof. Memmo Avatar">
       </div>
     </div>
@@ -66,7 +66,7 @@
           <span class="user-trigger-chevron"><i class="fa-solid fa-chevron-down"></i></span>
         </div>
 
-        <!-- Dropdown Card Integrata -->
+        <!-- Dropdown Card Integrata (Con Scrollbar e Mai Tagliata) -->
         <div class="user-dropdown hidden" id="user-dropdown">
           <div class="dropdown-user-header">
             <div class="dropdown-user-title" id="dropdown-user-name">ACCESSO DOCENTE</div>
@@ -137,84 +137,204 @@
   <!-- CONTENITORE PRINCIPALE VISTE -->
   <main class="main-wrapper">
 
-    <!-- 1. VIEW: IL GIOCO (PLANCIA E RUOTA) -->
-    <section id="view-game" class="app-view">
-      <!-- Banner di Stato -->
-      <div class="turn-status-banner" id="turn-status-banner">
-        <i class="fa-solid fa-compass" style="color: var(--accent-geo);"></i>
-        <span>Scegli se attivare la Ruota Modalità o giocare in modalità FREE.</span>
-      </div>
+    <!-- ==========================================
+         1. VIEW: WELCOME HOME (Stile L'Oratore / HistoryGram)
+         ========================================== -->
+    <section id="view-welcome" class="app-view active">
+      <div class="welcome-hero">
+        <img src="assets/branding/la-ruota-geografica-badge.png" alt="La Ruota Geografica" class="welcome-hero-logo" onerror="this.src='assets/branding/la-ruota-geografica-header.png'">
+        <p class="welcome-subtitle">
+          Il Gioco Didattico a Squadre per esplorare la geografia, la Terra nello spazio e il rapporto uomo-ambiente con sfide espressive, mimica, disegno e narrazione.
+        </p>
 
-      <div class="game-play-area">
-        <!-- Box Ruota Interattiva -->
-        <div class="wheel-container-card" id="wheel-section-box">
-          
-          <!-- Scelta iniziale modalità di turno -->
-          <div id="step-choose-mode" class="wheel-controls-box" style="margin-top: 0; margin-bottom: 20px;">
-            <div class="btn-choice-group">
-              <button class="btn-choice" onclick="App.startWithFreeMode()">
-                <span class="emoji">▶️</span>
-                <span>Modalità FREE</span>
-                <small>Gioca subito senza modificatori</small>
-              </button>
-              <button class="btn-choice" onclick="App.prepareSpinModeWheel()" style="border-color: rgba(14, 165, 233, 0.4);">
-                <span class="emoji">🎡</span>
-                <span>Ruota Modalità</span>
-                <small>Attiva imprevisti o moltiplicatori</small>
-              </button>
-            </div>
-          </div>
-
-          <!-- Canvas Ruota Interattiva -->
-          <canvas id="wheel-canvas" onclick="App.handleSpinButtonClick()" title="Clicca per far girare la ruota!"></canvas>
-
-          <!-- Pulsantone di Giro Ruota -->
-          <div id="step-spin-controls" class="wheel-controls-box hidden">
-            <button class="btn-primary-glow" id="btn-spin-wheel" onclick="App.handleSpinButtonClick()">
-              🎡 GIRA LA RUOTA CATEGORIE
-            </button>
-            <button class="btn-choice" onclick="App.resetTurn()" style="padding: 10px; font-size: 0.85rem;">
-              <i class="fa-solid fa-rotate-left"></i> Cambia Scelta Turno
-            </button>
-          </div>
+        <div class="mode-pills-row">
+          <div class="mode-pill"><i class="fa-solid fa-users" style="color: var(--accent-geo);"></i> Sfida a Squadre</div>
+          <div class="mode-pill"><i class="fa-solid fa-compass" style="color: #06b6d4;"></i> 5 Percorsi Tematici</div>
+          <div class="mode-pill"><i class="fa-solid fa-palette" style="color: #8b5cf6;"></i> 8 Linguaggi Espressivi</div>
+          <div class="mode-pill"><i class="fa-solid fa-stopwatch" style="color: var(--accent-gold);"></i> Timer 1 Minuto</div>
         </div>
 
-        <!-- Box Carta Prova Estratta (Inizialmente nascosto) -->
-        <div id="challenge-card-box" class="challenge-card-box hidden">
-          <div class="challenge-header-badges">
-            <span class="badge-tag badge-cat" id="card-badge-cat">🎥 REEL</span>
-            <span class="badge-tag badge-mode" id="card-badge-mode">▶️ FREE</span>
-          </div>
-
-          <div class="timer-capsule">
-            <i class="fa-solid fa-stopwatch" style="color: var(--accent-geo-light);"></i>
-            <span class="timer-count" id="timer-count">45s</span>
-          </div>
-
-          <div class="challenge-prompt-text" id="card-prompt-text">
-            Testo della prova...
-          </div>
-
-          <p class="challenge-instructions" id="card-instructions">
-            Istruzioni per la spiegazione...
-          </p>
-
-          <div style="display: flex; gap: 12px; margin-top: 10px;">
-            <button class="btn-primary-glow" onclick="App.resetTurn()">
-              <i class="fa-solid fa-forward-step"></i> Prossimo Turno
-            </button>
-          </div>
-        </div>
-
+        <div class="welcome-actions-wrap" style="display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-top: 20px;">
+          <button class="btn-giant btn-primary-glow" onclick="App.startSetupFlow()">
+            <i class="fa-solid fa-play"></i> Inizia Nuova Partita
+          </button>
+          <button class="btn-giant btn-choice" onclick="App.showView('view-regolamento')" style="width: auto; padding: 14px 28px; font-size: 1rem;">
+            <i class="fa-solid fa-scale-balanced"></i> Regolamento
+          </button>
         </div>
       </div>
     </section>
 
-    <!-- 2. VIEW: TABELLONE SQUADRE (PAGINA AUTONOMA) -->
+    <!-- ==========================================
+         2. VIEW: SCELTA PERCORSO TEMATICO (Passo 1 di 2 Stile HistoryGram)
+         ========================================== -->
+    <section id="view-setup-topic" class="app-view hidden">
+      <div class="page-title-box">
+        <h1 class="page-title">Scegli il Percorso Tematico</h1>
+      </div>
+
+      <div class="setup-choice-grid">
+        <!-- Card 1: Geografia Astronomica -->
+        <div class="setup-choice-card" onclick="App.selectTopic('astronomia')">
+          <div class="setup-choice-icon">🌌</div>
+          <h3 class="setup-choice-title">Geografia Astronomica</h3>
+          <p class="setup-choice-desc">Morfologia della Terra, moti celesti, vulcani, terremoti e continenti.</p>
+          <button class="btn-primary-glow" style="width: auto; padding: 8px 20px; font-size: 0.85rem; pointer-events: none;">
+            Seleziona ➔
+          </button>
+        </div>
+
+        <!-- Card 2: Climatologia -->
+        <div class="setup-choice-card" onclick="App.selectTopic('climatologia')">
+          <div class="setup-choice-icon">⛅</div>
+          <h3 class="setup-choice-title">Climatologia</h3>
+          <p class="setup-choice-desc">Atmosfera, venti, fasce climatiche, riscaldamento globale e biomi naturali.</p>
+          <button class="btn-primary-glow" style="width: auto; padding: 8px 20px; font-size: 0.85rem; pointer-events: none;">
+            Seleziona ➔
+          </button>
+        </div>
+
+        <!-- Card 3: Demografia -->
+        <div class="setup-choice-card" onclick="App.selectTopic('demografia')">
+          <div class="setup-choice-icon">👥</div>
+          <h3 class="setup-choice-title">Demografia</h3>
+          <p class="setup-choice-desc">Movimenti della popolazione, migrazioni, metropoli, lingue e religioni nel mondo.</p>
+          <button class="btn-primary-glow" style="width: auto; padding: 8px 20px; font-size: 0.85rem; pointer-events: none;">
+            Seleziona ➔
+          </button>
+        </div>
+
+        <!-- Card 4: Geografia Economica -->
+        <div class="setup-choice-card" onclick="App.selectTopic('economia')">
+          <div class="setup-choice-icon">🏭</div>
+          <h3 class="setup-choice-title">Geografia Economica</h3>
+          <p class="setup-choice-desc">Settori produttivi, risorse, energie rinnovabili, trasporti e sviluppo sostenibile.</p>
+          <button class="btn-primary-glow" style="width: auto; padding: 8px 20px; font-size: 0.85rem; pointer-events: none;">
+            Seleziona ➔
+          </button>
+        </div>
+
+        <!-- Card 5: La Globalizzazione -->
+        <div class="setup-choice-card" onclick="App.selectTopic('globalizzazione')">
+          <div class="setup-choice-icon">🕊️</div>
+          <h3 class="setup-choice-title">La Globalizzazione</h3>
+          <p class="setup-choice-desc">ONU, villaggio globale, cooperazione, diritti umani e costruttori di pace.</p>
+          <button class="btn-primary-glow" style="width: auto; padding: 8px 20px; font-size: 0.85rem; pointer-events: none;">
+            Seleziona ➔
+          </button>
+        </div>
+      </div>
+
+      <div style="text-align: center; margin-top: 20px;">
+        <button class="btn-choice" onclick="App.showView('view-welcome')" style="display: inline-flex; width: auto; padding: 10px 24px; font-size: 0.9rem; flex-direction: row; gap: 8px;">
+          <i class="fa-solid fa-arrow-left"></i> Torna alla Home
+        </button>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         3. VIEW: IL GIOCO (DUE RUOTE AFFIANCATE A SCHERMO INTERO)
+         ========================================== -->
+    <section id="view-game" class="app-view hidden">
+      <!-- Barra Percorso Tematico Attivo -->
+      <div style="background: #ffffff; border: 1px solid var(--border-subtle); border-radius: 16px; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span id="active-topic-icon" style="font-size: 1.6rem;">🌌</span>
+          <div>
+            <strong id="active-topic-title" style="font-family: var(--font-heading); font-size: 1.05rem; color: #0f172a;">Geografia Astronomica</strong>
+            <div id="active-topic-sub" style="font-size: 0.78rem; color: var(--text-muted);">Morfologia della Terra e Continenti</div>
+          </div>
+        </div>
+        <div>
+          <button class="btn-choice" onclick="App.showView('view-setup-topic')" style="width: auto; padding: 8px 18px; font-size: 0.85rem; flex-direction: row; gap: 6px;">
+            <i class="fa-solid fa-repeat"></i> Cambia Argomento
+          </button>
+        </div>
+      </div>
+
+      <!-- Griglia Panoramica a Due Ruote Affiancate (Dual Wheel Full Screen) -->
+      <div class="dual-wheels-grid">
+        
+        <!-- Ruota Sinistra: Ruota Modalità -->
+        <div class="wheel-card-panel">
+          <div class="wheel-panel-header">
+            <h2 class="wheel-panel-title">
+              <span>🎡</span> Ruota Modalità
+            </h2>
+          </div>
+
+          <canvas id="wheel-canvas-mode" class="wheel-canvas-item" onclick="App.handleSpinModeClick()" title="Clicca per far girare la Ruota Modalità"></canvas>
+
+          <div class="wheel-controls-box" style="margin-top: 18px; display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 380px;">
+            <button class="btn-primary-glow" id="btn-spin-mode" onclick="App.handleSpinModeClick()">
+              🎡 GIRA RUOTA MODALITÀ
+            </button>
+            <button class="btn-choice" id="btn-free-mode" onclick="App.startWithFreeMode()" style="padding: 10px; font-size: 0.88rem; flex-direction: row; gap: 6px; justify-content: center;">
+              <span>▶️</span> Gioca in Modalità FREE
+            </button>
+          </div>
+        </div>
+
+        <!-- Ruota Destra: Ruota Categorie Espressive -->
+        <div class="wheel-card-panel">
+          <div class="wheel-panel-header">
+            <h2 class="wheel-panel-title">
+              <span>🎨</span> Ruota Categorie (8 Linguaggi)
+            </h2>
+          </div>
+
+          <canvas id="wheel-canvas-cat" class="wheel-canvas-item" onclick="App.handleSpinCategoryClick()" title="Clicca per far girare la Ruota Categorie"></canvas>
+
+          <div class="wheel-controls-box" style="margin-top: 18px; display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 380px;">
+            <button class="btn-primary-glow" id="btn-spin-cat" onclick="App.handleSpinCategoryClick()">
+              🎯 GIRA RUOTA CATEGORIE
+            </button>
+            <button class="btn-choice" onclick="App.resetTurn()" style="padding: 10px; font-size: 0.88rem; flex-direction: row; gap: 6px; justify-content: center;">
+              <i class="fa-solid fa-rotate-left"></i> Resetta Turno
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Box Carta Prova Estratta (Inizialmente nascosto) -->
+      <div id="challenge-card-box" class="challenge-card-box hidden" style="max-width: 800px; margin: 20px auto 0 auto; width: 100%;">
+        <div class="challenge-header-badges">
+          <span class="badge-tag badge-cat" id="card-badge-cat">🎥 REEL</span>
+          <span class="badge-tag badge-mode" id="card-badge-mode">▶️ FREE</span>
+        </div>
+
+        <!-- Timer Standard 1 Minuto (60s) -->
+        <div class="timer-capsule" style="cursor: pointer;" onclick="App.toggleTimer()" title="Clicca per avviare/mettere in pausa il timer">
+          <i class="fa-solid fa-stopwatch" style="color: var(--accent-geo-light);"></i>
+          <span class="timer-count" id="timer-count">60s</span>
+        </div>
+
+        <div class="challenge-prompt-text" id="card-prompt-text">
+          Caricamento prova...
+        </div>
+
+        <p class="challenge-instructions" id="card-instructions">
+          Istruzioni per la spiegazione...
+        </p>
+
+        <div style="display: flex; gap: 12px; margin-top: 18px; justify-content: center; flex-wrap: wrap;">
+          <button class="btn-choice" id="btn-timer-toggle" onclick="App.toggleTimer()" style="width: auto; padding: 10px 20px; font-size: 0.9rem; flex-direction: row; gap: 8px;">
+            <i class="fa-solid fa-play"></i> Avvia Timer (60s)
+          </button>
+          <button class="btn-primary-glow" onclick="App.resetTurn()" style="width: auto; padding: 10px 24px; font-size: 0.9rem;">
+            <i class="fa-solid fa-forward-step"></i> Prossimo Turno
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         4. VIEW: TABELLONE SQUADRE (PAGINA AUTONOMA)
+         ========================================== -->
     <section id="view-tabellone" class="app-view hidden">
       <div class="page-title-box">
         <h1 class="page-title">🏆 Tabellone Squadre</h1>
-        <p class="page-subtitle">Gestione punteggi, sfide tra gruppi e classifica di classe in tempo reale</p>
       </div>
 
       <div class="scoreboard-section" style="max-width: 680px; margin: 0 auto; width: 100%;">
@@ -240,11 +360,12 @@
       </div>
     </section>
 
-    <!-- 3. VIEW: REGOLAMENTO UFFICIALE -->
+    <!-- ==========================================
+         5. VIEW: REGOLAMENTO UFFICIALE
+         ========================================== -->
     <section id="view-regolamento" class="app-view hidden">
       <div class="page-title-box">
         <h1 class="page-title">📜 Regolamento Ufficiale</h1>
-        <p class="page-subtitle">Norme pedagogiche, meccaniche di turno e linguaggi espressivi de La Ruota Geografica</p>
         <div style="margin-top: 14px;">
           <button id="btn-open-rules-editor" class="dropdown-pill-btn hidden" style="display: inline-flex; width: auto; background: var(--accent-geo); color: #ffffff; padding: 8px 20px;" onclick="App.openRulesEditor()">
             <i class="fa-solid fa-pen-to-square"></i> Modifica Regolamento (Super-Admin)
@@ -257,21 +378,18 @@
       </div>
     </section>
 
-    <!-- 4. VIEW: CATTEDRA DOCENTE (ATTIVATA DINAMICAMENTE DA "IL PROF.") -->
+    <!-- ==========================================
+         6. VIEW: CATTEDRA DOCENTE ("IL PROF.")
+         ========================================== -->
     <section id="view-cattedra" class="app-view hidden">
       <div class="page-title-box">
         <h1 class="page-title">👨‍🏫 Scelta Docente ("IL PROF.")</h1>
-        <p class="page-subtitle">La ruota ha assegnato il turno al Professore! Seleziona la categoria su cui mettere alla prova la squadra:</p>
       </div>
 
-      <!-- Scelta Rapida Categoria Docente -->
       <div class="scoreboard-section" style="max-width: 820px; margin: 0 auto; width: 100%;">
         <h3 style="color: #0f172a; margin-bottom: 12px; font-size: 1.1rem; display: flex; align-items: center; gap: 8px;">
           <i class="fa-solid fa-hand-pointer" style="color: var(--accent-geo);"></i> Assegna Categoria alla Squadra
         </h3>
-        <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 16px;">
-          Clicca su una delle 8 categorie per estrarre direttamente la sfida mirata:
-        </p>
         <div class="manual-picker-grid">
           <div class="manual-cat-item" onclick="App.extractAndShowChallenge(WHEEL_CATEGORIES[0]); App.showView('view-game');"><span>🎥</span><strong>REEL</strong></div>
           <div class="manual-cat-item" onclick="App.extractAndShowChallenge(WHEEL_CATEGORIES[1]); App.showView('view-game');"><span>🧠</span><strong>QUIZ</strong></div>
@@ -290,7 +408,9 @@
       </div>
     </section>
 
-    <!-- 5. VIEW: PANNELLO SUPER-ADMIN (DASHBOARD CLOUD) -->
+    <!-- ==========================================
+         7. VIEW: PANNELLO SUPER-ADMIN
+         ========================================== -->
     <section id="view-admin" class="app-view hidden">
       <div class="setup-header-box" style="border-bottom: 2px solid var(--accent-geo); padding-bottom: 16px; margin-bottom: 25px;">
         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
@@ -298,8 +418,7 @@
             <span style="font-size: 0.75rem; font-weight: 800; background: rgba(245, 158, 11, 0.15); color: #d97706; border: 1px solid rgba(245, 158, 11, 0.3); padding: 5px 14px; border-radius: 50px; display: inline-flex; align-items: center; gap: 6px;">
               <i class="fa-solid fa-crown"></i> SUPER-ADMIN CONSOLE
             </span>
-            <h2 class="page-title" style="color: #0f172a; margin: 8px 0 0 0; font-size: 1.6rem;">Pannello di Amministrazione La Ruota Geografica</h2>
-            <p class="page-subtitle" style="margin: 4px 0 0 0;">Gestione e sincronizzazione in tempo reale del Regolamento Ufficiale su Firestore (<code>prof.memmo@gmail.com</code>).</p>
+            <h2 class="page-title" style="color: #0f172a; margin: 8px 0 0 0; font-size: 1.6rem;">Pannello di Amministrazione</h2>
           </div>
           <div>
             <button class="btn-choice" onclick="App.showView('view-game')" style="width: auto; padding: 8px 20px; font-size: 0.85rem; flex-direction: row; gap: 6px; border-radius: 50px;">
@@ -330,31 +449,31 @@
 
   </main>
 
-  <!-- BOTTOM DOCK NAVIGATION BAR (64PX) -->
+  <!-- BOTTOM DOCK NAVIGATION BAR (ECOSISTEMA STANDARD) -->
   <nav class="bottom-bar">
-    <a href="#" class="tab-item active" data-view="view-game" onclick="App.showView('view-game'); return false;">
-      <i class="fa-solid fa-compass"></i>
-      <span>La Ruota</span>
+    <a href="#" class="tab-item active" data-view="view-welcome" onclick="App.showView('view-welcome'); return false;" data-tooltip="Home">
+      <i class="fa-solid fa-house"></i>
+      <span>Home</span>
     </a>
-    <a href="#" class="tab-item" data-view="view-tabellone" onclick="App.showView('view-tabellone'); return false;">
-      <i class="fa-solid fa-trophy"></i>
-      <span>Tabellone</span>
-    </a>
-    <a href="#" class="tab-item" id="tab-miniguida" onclick="App.openMiniguida(); return false;" title="Miniguida">
+    <a href="#" class="tab-item" id="tab-miniguida" onclick="App.openMiniguida(); return false;" data-tooltip="Miniguida">
       <i class="fa-solid fa-circle-question"></i>
       <span>Miniguida</span>
     </a>
-    <a href="#" class="tab-item" data-view="view-regolamento" onclick="App.showView('view-regolamento'); return false;">
+    <a href="#" class="tab-item" data-view="view-regolamento" onclick="App.showView('view-regolamento'); return false;" data-tooltip="Regolamento">
       <i class="fa-solid fa-scale-balanced"></i>
       <span>Regolamento</span>
     </a>
-    <a href="#" class="tab-item hidden" id="tab-admin" data-view="view-admin" onclick="App.showView('view-admin'); return false;" title="Admin">
+    <a href="#" class="tab-item" data-view="view-tabellone" onclick="App.showView('view-tabellone'); return false;" data-tooltip="Tabellone">
+      <i class="fa-solid fa-trophy"></i>
+      <span>Tabellone</span>
+    </a>
+    <a href="#" class="tab-item hidden" id="tab-admin" data-view="view-admin" onclick="App.showView('view-admin'); return false;" data-tooltip="Admin">
       <i class="fa-solid fa-crown"></i>
       <span>Admin</span>
     </a>
   </nav>
 
-  <!-- MODALE: MINIGUIDA INTERATTIVA A STEP -->
+  <!-- MODALE: MINIGUIDA A 6 STEP CANONICI DELL'ECOSISTEMA -->
   <div id="modalMiniguida" class="app-modal-overlay hidden" onclick="if(event.target === this) App.closeMiniguida()">
     <div class="app-modal-content" style="max-width: 820px; padding: 0; overflow: hidden; display: flex; border-radius: 24px;">
       <div style="width: 35%; background: #f8fafc; display: flex; align-items: flex-end; justify-content: center; border-right: 1px solid var(--border-subtle); padding-top: 20px;" class="hide-mobile">
@@ -364,18 +483,17 @@
         <span class="close-modal-btn" onclick="App.closeMiniguida()" style="top: 14px; right: 18px;">&times;</span>
         
         <div style="text-align: center; margin-bottom: 20px;">
-          <span style="font-size: 0.75rem; font-weight: 800; color: var(--accent-geo); letter-spacing: 1px; text-transform: uppercase;">Tutorial Interattivo</span>
-          <h2 style="font-size: 1.6rem; font-weight: 800; color: #0f172a; margin-top: 4px;">Miniguida di Gioco</h2>
+          <h2 style="font-size: 1.8rem; font-weight: 900; color: #0f172a; font-family: var(--font-heading); text-transform: uppercase;">Miniguida</h2>
         </div>
 
         <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;">
           <div id="miniguida-icon" style="font-size: 4rem; margin-bottom: 12px;">🎯</div>
-          <h3 id="miniguida-step-title" style="font-size: 1.25rem; font-weight: 800; color: #0f172a; margin-bottom: 10px;">Obiettivo Pedagogico</h3>
-          <p id="miniguida-step-desc" style="font-size: 0.98rem; color: #475569; line-height: 1.6; max-width: 440px;">Descrizione del passo...</p>
+          <h3 id="miniguida-step-title" style="font-size: 1.25rem; font-weight: 800; color: #0f172a; margin-bottom: 10px;">Scopo del Gioco</h3>
+          <p id="miniguida-step-desc" style="font-size: 1rem; color: #475569; line-height: 1.6; max-width: 480px;">Caricamento guida...</p>
         </div>
 
         <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border-subtle);">
-          <div style="font-size: 0.82rem; font-weight: 800; color: #64748b;" id="miniguida-counter">Passo 1 di 5</div>
+          <div style="font-size: 0.82rem; font-weight: 800; color: #64748b;" id="miniguida-counter">Passo 1 di 6</div>
           <div style="display: flex; gap: 10px;">
             <button id="miniguida-prev-btn" onclick="App.prevMiniguidaStep()" class="btn-choice" style="width: auto; padding: 8px 18px; font-size: 0.85rem; visibility: hidden; flex-direction: row; gap: 6px;">
               <i class="fa-solid fa-arrow-left"></i> Indietro
@@ -402,11 +520,11 @@
     </div>
   </div>
 
-  <!-- MODALE: SELETTORE MANUALE CATEGORIA -->
+  <!-- MODALE: SELETTORE MANUALE CATEGORIA (Per "SCEGLI TU" o "AMICO") -->
   <div id="manual-category-modal" class="app-modal-overlay hidden">
     <div class="app-modal-content">
       <span class="close-modal-btn" onclick="document.getElementById('manual-category-modal').classList.add('hidden')">&times;</span>
-      <h3 style="font-family: var(--font-heading); color: #ffffff; margin-bottom: 8px;" id="manual-picker-title">Seleziona Categoria</h3>
+      <h3 style="font-family: var(--font-heading); color: #0f172a; margin-bottom: 8px;" id="manual-picker-title">Seleziona Categoria</h3>
       <p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 16px;">Scegli la categoria su cui affrontare la prova di questo turno:</p>
       <div class="manual-picker-grid" id="manual-picker-list"></div>
     </div>
@@ -414,39 +532,27 @@
 
   <!-- MODALE: LIVE EDITOR REGOLAMENTO (SUPER-ADMIN) -->
   <div id="rules-editor-modal" class="app-modal-overlay hidden">
-    <div class="app-modal-content" style="max-width: 680px;">
+    <div class="app-modal-content" style="max-width: 720px;">
       <span class="close-modal-btn" onclick="App.closeRulesEditor()">&times;</span>
-      <h3 style="color: var(--accent-geo-light); font-family: var(--font-heading); margin-bottom: 10px;">
-        <i class="fa-solid fa-pen-to-square"></i> Editor Regolamento La Ruota Geografica
-      </h3>
-      <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 12px;">
-        Modifica il testo ufficiale. Ogni blocco numerato (es. <code>1. Titolo</code>) genererà automaticamente una card nell'interfaccia.
+      <h2 style="font-family: var(--font-heading); color: #0f172a; margin-bottom: 6px;">Live Editor Regolamento Cloud</h2>
+      <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 16px;">
+        Le modifiche salvate saranno sincronizzate in tempo reale su Firestore e visibili a tutti gli studenti.
       </p>
-      <textarea id="rules-editor-textarea" style="width: 100%; height: 350px; background: #070a13; color: #f8fafc; border: 1px solid var(--border-subtle); border-radius: 12px; padding: 14px; font-family: monospace; font-size: 0.88rem; line-height: 1.5; resize: vertical; margin-bottom: 16px;"></textarea>
+      <textarea id="rules-editor-textarea" style="width: 100%; height: 320px; font-family: monospace; font-size: 0.85rem; padding: 12px; border: 1px solid var(--border-subtle); border-radius: 12px; resize: vertical; margin-bottom: 16px;"></textarea>
       <div style="display: flex; justify-content: flex-end; gap: 10px;">
-        <button class="dropdown-pill-btn" style="width: auto; padding: 8px 18px;" onclick="App.closeRulesEditor()">Annulla</button>
-        <button class="btn-primary-glow" style="width: auto; padding: 8px 24px;" onclick="App.saveRulesEditor()">Salva sul Cloud</button>
+        <button class="btn-choice" onclick="App.closeRulesEditor()" style="width: auto; padding: 8px 18px; font-size: 0.85rem;">Annulla</button>
+        <button class="btn-primary-glow" onclick="App.saveRulesFromEditor()" style="width: auto; padding: 8px 24px; font-size: 0.85rem;">
+          <i class="fa-solid fa-cloud-arrow-up"></i> Salva su Cloud
+        </button>
       </div>
-    </div>
-  </div>
-
-  <!-- MODALE LEGALE CONDIVISO ECOSYSTEM -->
-  <div id="legal-modal" class="app-modal-overlay hidden">
-    <div class="app-modal-content">
-      <span class="close-modal-btn" onclick="document.getElementById('legal-modal').classList.add('hidden')">&times;</span>
-      <h3 id="legal-modal-title" style="color: var(--accent-geo-light); margin-bottom: 15px;">Informativa</h3>
-      <div id="legal-modal-body" style="font-size: 0.88rem; color: #cbd5e1; line-height: 1.5; max-height: 55vh; overflow-y: auto; margin-bottom: 20px;">
-        Caricamento informativa...
-      </div>
-      <button class="btn-primary-glow" onclick="document.getElementById('legal-modal').classList.add('hidden')">Ho Capito</button>
     </div>
   </div>
 
   <!-- Scripts dell'Applicazione -->
-  <script src="js/music.js?v=20261018_admin_panel"></script>
-  <script src="js/cards-data.js?v=20261018_admin_panel"></script>
-  <script src="js/wheel-engine.js?v=20261018_admin_panel"></script>
-  <script src="js/rules-service.js?v=20261018_admin_panel"></script>
-  <script src="js/app.js?v=20261018_admin_panel"></script>
+  <script src="js/music.js?v=20261018_dual_wheel"></script>
+  <script src="js/cards-data.js?v=20261018_dual_wheel"></script>
+  <script src="js/wheel-engine.js?v=20261018_dual_wheel"></script>
+  <script src="js/rules-service.js?v=20261018_dual_wheel"></script>
+  <script src="js/app.js?v=20261018_dual_wheel"></script>
 </body>
 </html>

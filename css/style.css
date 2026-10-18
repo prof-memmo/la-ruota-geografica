@@ -199,7 +199,9 @@ button, input, textarea, select, a, span, p, h1, h2, h3, h4, h5, h6 {
   border-radius: 16px;
   padding: 16px;
   box-shadow: 0 16px 36px rgba(0, 0, 0, 0.12);
-  z-index: 1000;
+  z-index: 1001;
+  max-height: calc(100vh - 90px);
+  overflow-y: auto;
 }
 
 .dropdown-user-header {
@@ -377,52 +379,191 @@ button, input, textarea, select, a, span, p, h1, h2, h3, h4, h5, h6 {
   gap: 24px;
 }
 
-/* Banner di Stato del Turno */
-.turn-status-banner {
-  background: #f0f9ff;
-  border: 1px solid #bae6fd;
-  border-left: 4px solid var(--accent-geo);
-  border-radius: 12px;
-  padding: 14px 20px;
-  font-size: 1rem;
-  font-weight: 700;
-  color: #0369a1;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  box-shadow: 0 2px 8px rgba(14, 165, 233, 0.08);
+/* Welcome Hero (Stile L'Oratore / HistoryGram) */
+.welcome-hero {
+  text-align: center;
+  max-width: 900px;
+  margin: 10px auto 30px auto;
+  padding: 10px 16px;
 }
 
-/* Area Gioco / Ruota */
-.game-play-area {
+.welcome-hero-logo {
+  height: 220px;
+  max-height: 28vh;
+  max-width: 100%;
+  object-fit: contain;
+  margin: 0 auto 16px auto;
+  display: block;
+  filter: drop-shadow(0 12px 24px rgba(14, 165, 233, 0.2));
+  transition: transform 0.25s ease;
+}
+
+.welcome-hero-logo:hover {
+  transform: scale(1.02);
+}
+
+.welcome-title {
+  display: none !important;
+}
+
+.welcome-subtitle {
+  color: var(--text-muted);
+  font-size: 1.05rem;
+  max-width: 680px;
+  margin: 0 auto 20px auto;
+  line-height: 1.6;
+}
+
+.mode-pills-row {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+
+.mode-pill {
+  background: #ffffff;
+  border: 1px solid var(--border-subtle);
+  padding: 8px 16px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  font-family: var(--font-heading);
+  color: #0f172a;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-giant {
+  padding: 14px 32px !important;
+  font-size: 1.05rem !important;
+  border-radius: 50px !important;
+  font-family: var(--font-heading);
+  font-weight: 800;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.25s ease;
+}
+
+/* Setup Scelta Percorso Tematico (Passo 1 Stile HistoryGram) */
+.setup-choice-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  max-width: 1050px;
+  margin: 20px auto;
+  width: 100%;
+}
+
+.setup-choice-card {
+  background: #ffffff;
+  border: 2px solid var(--border-subtle);
+  border-radius: 20px;
+  padding: 24px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.25s ease;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 24px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
 }
 
-.wheel-container-card {
+.setup-choice-card:hover {
+  border-color: var(--accent-geo);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px rgba(14, 165, 233, 0.15);
+}
+
+.setup-choice-card.selected {
+  border-color: var(--accent-geo);
+  background: #f0f9ff;
+  box-shadow: 0 0 0 2px var(--accent-geo), 0 12px 28px rgba(14, 165, 233, 0.2);
+}
+
+.setup-choice-icon {
+  font-size: 2.8rem;
+  margin-bottom: 12px;
+}
+
+.setup-choice-title {
+  font-family: var(--font-heading);
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 6px;
+}
+
+.setup-choice-desc {
+  font-size: 0.86rem;
+  color: var(--text-muted);
+  line-height: 1.45;
+  margin-bottom: 16px;
+  flex: 1;
+}
+
+/* Plancia di Gioco a Due Ruote Affiancate (Dual Wheel Full Screen) */
+.dual-wheels-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+@media (max-width: 900px) {
+  .dual-wheels-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+}
+
+.wheel-card-panel {
   background: #ffffff;
   border: 1px solid var(--border-subtle);
   border-radius: 24px;
-  padding: 28px;
+  padding: 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.06);
-  width: 100%;
-  max-width: 540px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
 }
 
-#wheel-canvas {
+.wheel-panel-header {
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+.wheel-panel-title {
+  font-family: var(--font-heading);
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #0f172a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.wheel-canvas-item {
   width: 100%;
-  max-width: 460px;
+  max-width: 440px;
   height: auto;
   aspect-ratio: 1 / 1;
   border-radius: 50%;
   cursor: pointer;
   filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.12));
   transition: transform 0.2s ease;
+}
+
+.wheel-canvas-item:hover {
+  transform: scale(1.015);
 }
 
 .wheel-controls-box {
@@ -777,14 +918,14 @@ button, input, textarea, select, a, span, p, h1, h2, h3, h4, h5, h6 {
 }
 
 /* -------------------------------------------------------------
- * BOTTOM DOCK NAVIGATION BAR (64px, Fixed Centered)
+ * BOTTOM DOCK NAVIGATION BAR (ECOSISTEMA STANDARD)
  * ------------------------------------------------------------- */
 .bottom-bar {
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
-  height: var(--dock-height);
+  height: 64px;
   background: rgba(255, 255, 255, 0.96);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
@@ -792,31 +933,105 @@ button, input, textarea, select, a, span, p, h1, h2, h3, h4, h5, h6 {
   box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.06);
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 32px;
-  z-index: 99;
+  justify-content: space-evenly;
+  padding: 0 10px;
+  z-index: 999;
 }
 
 .tab-item {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 4px;
   color: var(--text-light);
   text-decoration: none;
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   font-weight: 700;
-  transition: all 0.2s ease;
   cursor: pointer;
+  flex: 1;
+  min-width: 50px;
+  height: 100%;
+  transition: all 0.2s ease;
 }
 
 .tab-item i {
-  font-size: 1.25rem;
+  font-size: 1.15rem;
 }
 
 .tab-item:hover, .tab-item.active {
   color: var(--accent-geo);
   transform: translateY(-2px);
+}
+
+@media (min-width: 768px) {
+  .bottom-bar {
+    width: max-content !important;
+    min-width: 380px;
+    max-width: 90vw;
+    height: 68px;
+    bottom: 20px;
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    border-radius: 40px;
+    border: 1px solid var(--border-subtle);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+    padding: 0 24px;
+    gap: 16px;
+    overflow: visible !important;
+  }
+
+  .tab-item {
+    position: relative;
+    flex: 0 0 auto;
+    min-width: 54px;
+    padding: 8px 14px;
+  }
+
+  .tab-item span {
+    display: none; /* Nasconde le etichette statiche su desktop come negli altri siti */
+  }
+
+  .tab-item i {
+    font-size: 1.45rem;
+    transition: transform 0.25s ease, color 0.25s ease;
+  }
+
+  .tab-item::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 115%;
+    left: 50%;
+    transform: translateX(-50%) translateY(8px);
+    background: #0f172a;
+    color: #ffffff;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 800;
+    font-family: var(--font-heading);
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s ease;
+    pointer-events: none;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    z-index: 2000;
+    letter-spacing: 0.5px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+  }
+
+  .tab-item:hover::after {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  .tab-item:hover i {
+    transform: translateY(-3px);
+    color: var(--accent-geo);
+  }
 }
 
 /* -------------------------------------------------------------
