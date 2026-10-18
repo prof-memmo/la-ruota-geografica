@@ -53,6 +53,21 @@ const App = {
       }
     });
 
+    // 6. Tasto Escape per chiudere tutti i modali
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        this.closeMiniguida();
+        this.closeRulesEditor();
+        const modeModal = document.getElementById('mode-outcome-modal');
+        if (modeModal) modeModal.classList.add('hidden');
+        const manualModal = document.getElementById('manual-category-modal');
+        if (manualModal) manualModal.classList.add('hidden');
+        const legalModal = document.getElementById('legal-modal');
+        if (legalModal) legalModal.classList.add('hidden');
+        document.body.style.overflow = '';
+      }
+    });
+
     this.showView('view-game');
   },
 
@@ -378,6 +393,95 @@ const App = {
     if (event) event.stopPropagation();
     const dropdown = document.getElementById('user-dropdown');
     if (dropdown) dropdown.classList.toggle('hidden');
+  },
+
+  /* -------------------------------------------------------------
+   * Miniguida Interattiva a Step
+   * ------------------------------------------------------------- */
+  miniguidaStep: 0,
+  miniguidaSteps: [
+    {
+      icon: "🌍",
+      title: "Esplora la Geografia Attiva",
+      desc: "La Ruota Geografica è il gioco a squadre ideato da Prof. Memmo per imparare la geografia generale, l'astronomia e il rapporto uomo-ambiente attraverso il gioco espressivo e la collaborazione in classe."
+    },
+    {
+      icon: "🎡",
+      title: "FREE o Ruota Modalità",
+      desc: "Prima del turno puoi scegliere la modalità FREE per giocare direttamente, oppure girare la Ruota Modalità per attivare moltiplicatori, imprevisti speciali o la chiamata guidata de IL PROF.!"
+    },
+    {
+      icon: "🎨",
+      title: "8 Linguaggi Espressivi",
+      desc: "La Ruota contiene 8 categorie diverse: Reel, Quiz, Mimo, Meme, Podcast, Creatività, Disegno e Scoperta, per un totale di 192 prove didattiche originali."
+    },
+    {
+      icon: "⏱",
+      title: "Sfida il Timer",
+      desc: "Ogni prova dura 45 secondi standard. Attenzione: in modalità Fast & Furious avrai solo 15 secondi, mentre in Slow-Motion potrai ragionare con calma fino a 90 secondi!"
+    },
+    {
+      icon: "🏆",
+      title: "Tabellone Squadre",
+      desc: "Accedi alla nuova pagina Tabellone dalla barra in basso per gestire i punti, aggiungere nuove squadre della classe e monitorare la classifica in tempo reale!"
+    }
+  ],
+
+  openMiniguida() {
+    this.miniguidaStep = 0;
+    this.updateMiniguidaView();
+    const modal = document.getElementById('modalMiniguida');
+    if (modal) {
+      modal.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    }
+  },
+
+  closeMiniguida() {
+    const modal = document.getElementById('modalMiniguida');
+    if (modal) {
+      modal.classList.add('hidden');
+      document.body.style.overflow = '';
+    }
+  },
+
+  nextMiniguidaStep() {
+    if (this.miniguidaStep < this.miniguidaSteps.length - 1) {
+      this.miniguidaStep++;
+      this.updateMiniguidaView();
+    } else {
+      this.closeMiniguida();
+    }
+  },
+
+  prevMiniguidaStep() {
+    if (this.miniguidaStep > 0) {
+      this.miniguidaStep--;
+      this.updateMiniguidaView();
+    }
+  },
+
+  updateMiniguidaView() {
+    const step = this.miniguidaSteps[this.miniguidaStep];
+    if (!step) return;
+    const iconEl = document.getElementById('miniguida-icon');
+    const titleEl = document.getElementById('miniguida-step-title');
+    const descEl = document.getElementById('miniguida-step-desc');
+    const counterEl = document.getElementById('miniguida-counter');
+    const prevBtn = document.getElementById('miniguida-prev-btn');
+    const nextBtn = document.getElementById('miniguida-next-btn');
+
+    if (iconEl) iconEl.textContent = step.icon;
+    if (titleEl) titleEl.textContent = step.title;
+    if (descEl) descEl.textContent = step.desc;
+    if (counterEl) counterEl.textContent = `Passo ${this.miniguidaStep + 1} di ${this.miniguidaSteps.length}`;
+
+    if (prevBtn) {
+      prevBtn.style.visibility = (this.miniguidaStep === 0) ? 'hidden' : 'visible';
+    }
+    if (nextBtn) {
+      nextBtn.textContent = (this.miniguidaStep === this.miniguidaSteps.length - 1) ? 'GIOCA! 🚀' : 'Avanti ➔';
+    }
   },
 
   /* -------------------------------------------------------------

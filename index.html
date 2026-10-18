@@ -305,11 +305,50 @@
       <i class="fa-solid fa-trophy"></i>
       <span>Tabellone</span>
     </a>
+    <a href="#" class="tab-item" id="tab-miniguida" onclick="App.openMiniguida(); return false;" title="Miniguida">
+      <i class="fa-solid fa-circle-question"></i>
+      <span>Miniguida</span>
+    </a>
     <a href="#" class="tab-item" data-view="view-regolamento" onclick="App.showView('view-regolamento'); return false;">
       <i class="fa-solid fa-scale-balanced"></i>
       <span>Regolamento</span>
     </a>
   </nav>
+
+  <!-- MODALE: MINIGUIDA INTERATTIVA A STEP -->
+  <div id="modalMiniguida" class="app-modal-overlay hidden" onclick="if(event.target === this) App.closeMiniguida()">
+    <div class="app-modal-content" style="max-width: 820px; padding: 0; overflow: hidden; display: flex; border-radius: 24px;">
+      <div style="width: 35%; background: #f8fafc; display: flex; align-items: flex-end; justify-content: center; border-right: 1px solid var(--border-subtle); padding-top: 20px;" class="hide-mobile">
+        <img src="https://prof-memmo.github.io/prof-memmo-gestione-siti/shared/assets/branding/prof-memmo/prof-memmo-full.jpg" alt="Prof Memmo" style="width: 110%; object-fit: contain; mix-blend-mode: multiply; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.15));" onerror="this.src='https://prof-memmo.github.io/prof-memmo-gestione-siti/shared/assets/branding/prof-memmo/prof-memmo-avatar.png'">
+      </div>
+      <div style="flex: 1; padding: 32px 36px; display: flex; flex-direction: column; position: relative; min-height: 420px; background: #ffffff;">
+        <span class="close-modal-btn" onclick="App.closeMiniguida()" style="top: 14px; right: 18px;">&times;</span>
+        
+        <div style="text-align: center; margin-bottom: 20px;">
+          <span style="font-size: 0.75rem; font-weight: 800; color: var(--accent-geo); letter-spacing: 1px; text-transform: uppercase;">Tutorial Interattivo</span>
+          <h2 style="font-size: 1.6rem; font-weight: 800; color: #0f172a; margin-top: 4px;">Miniguida di Gioco</h2>
+        </div>
+
+        <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;">
+          <div id="miniguida-icon" style="font-size: 4rem; margin-bottom: 12px;">🎯</div>
+          <h3 id="miniguida-step-title" style="font-size: 1.25rem; font-weight: 800; color: #0f172a; margin-bottom: 10px;">Obiettivo Pedagogico</h3>
+          <p id="miniguida-step-desc" style="font-size: 0.98rem; color: #475569; line-height: 1.6; max-width: 440px;">Descrizione del passo...</p>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border-subtle);">
+          <div style="font-size: 0.82rem; font-weight: 800; color: #64748b;" id="miniguida-counter">Passo 1 di 5</div>
+          <div style="display: flex; gap: 10px;">
+            <button id="miniguida-prev-btn" onclick="App.prevMiniguidaStep()" class="btn-choice" style="width: auto; padding: 8px 18px; font-size: 0.85rem; visibility: hidden; flex-direction: row; gap: 6px;">
+              <i class="fa-solid fa-arrow-left"></i> Indietro
+            </button>
+            <button id="miniguida-next-btn" onclick="App.nextMiniguidaStep()" class="btn-primary-glow" style="width: auto; padding: 10px 24px; font-size: 0.9rem;">
+              Avanti ➔
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- MODALE: ESITO RUOTA MODALITÀ -->
   <div id="mode-outcome-modal" class="app-modal-overlay hidden">
@@ -365,10 +404,10 @@
   </div>
 
   <!-- Scripts dell'Applicazione -->
-  <script src="js/music.js?v=20261017_3"></script>
-  <script src="js/cards-data.js?v=20261017_3"></script>
-  <script src="js/wheel-engine.js?v=20261017_3"></script>
-  <script src="js/rules-service.js?v=20261017_3"></script>
-  <script src="js/app.js?v=20261017_3"></script>
+  <script src="js/music.js?v=20261018_miniguida"></script>
+  <script src="js/cards-data.js?v=20261018_miniguida"></script>
+  <script src="js/wheel-engine.js?v=20261018_miniguida"></script>
+  <script src="js/rules-service.js?v=20261018_miniguida"></script>
+  <script src="js/app.js?v=20261018_miniguida"></script>
 </body>
 </html>
