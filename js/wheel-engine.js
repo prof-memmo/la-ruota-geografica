@@ -94,7 +94,7 @@ const WheelEngine = {
 
       // Etichetta del segmento
       this.ctx.fillStyle = '#090d16';
-      this.ctx.font = '800 15px "Outfit", "Inter", sans-serif';
+      this.ctx.font = '800 13px "Julius Sans One", sans-serif';
       this.ctx.fillText(item.name, radius - 28, 0);
 
       // Icona / Emoji
@@ -114,7 +114,7 @@ const WheelEngine = {
     this.ctx.stroke();
 
     this.ctx.fillStyle = '#ffffff';
-    this.ctx.font = '700 13px "Outfit", sans-serif';
+    this.ctx.font = '700 11px "Julius Sans One", sans-serif';
     this.ctx.textAlign = 'center';
     this.ctx.textBaseline = 'middle';
     this.ctx.fillText(this.currentType === 'modes' ? 'MODO' : 'RUOTA', 0, 0);

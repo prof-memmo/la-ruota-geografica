@@ -343,12 +343,12 @@ In linea con le linee guida pedagogiche di Prof. Memmo, l'attività didattica pr
                 const bodyHtml = hasBullets ? `<ul style="padding-left: 20px; margin: 8px 0;">${formattedContent}</ul>` : formattedContent;
 
                 html += `
-                <div class="rule-card" style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255, 255, 255, 0.1); border-left: 4px solid ${accentColor}; border-radius: 12px; padding: 20px; margin-bottom: 16px; backdrop-filter: blur(8px);">
+                <div class="rule-card" style="background: #ffffff; border: 1px solid #e2e8f0; border-left: 4px solid ${accentColor}; border-radius: 14px; padding: 22px; margin-bottom: 16px; box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);">
                     <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
                         <span style="background: ${accentColor}; color: white; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.9rem; flex-shrink: 0;">${num}</span>
-                        <h3 style="margin: 0; color: #f8fafc; font-size: 1.15rem; font-weight: 700;">${titleText}</h3>
+                        <h3 style="margin: 0; color: #0f172a; font-size: 1.15rem; font-weight: 700;">${titleText}</h3>
                     </div>
-                    <div style="color: #cbd5e1; font-size: 0.95rem;">
+                    <div style="color: #334155; font-size: 0.95rem; line-height: 1.6;">
                         ${bodyHtml}
                     </div>
                 </div>`;
