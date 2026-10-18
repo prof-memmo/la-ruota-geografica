@@ -87,6 +87,15 @@ const App = {
       }
     });
 
+    if (viewId === 'view-admin') {
+      if (!this.isSuperAdminUser()) {
+        alert("⛔ Accesso riservato esclusivamente al Super-Admin (prof.memmo@gmail.com).");
+        this.showView('view-game');
+        return;
+      }
+      this.renderAdminView();
+    }
+
     if (viewId === 'view-tabellone') {
       this.renderScoreboard();
     }
@@ -396,10 +405,13 @@ const App = {
         if (btnProfile) btnProfile.classList.add('hidden');
       }
 
+      const adminTab = document.getElementById('tab-admin');
       if (isSuperAdmin) {
         if (btnAdmin) btnAdmin.classList.remove('hidden');
+        if (adminTab) adminTab.classList.remove('hidden');
       } else {
         if (btnAdmin) btnAdmin.classList.add('hidden');
+        if (adminTab) adminTab.classList.add('hidden');
       }
       this.checkLiveEditorButton();
     };
@@ -620,20 +632,64 @@ const App = {
   checkLiveEditorButton() {
     const btn = document.getElementById('btn-open-rules-editor');
     if (!btn) return;
-    if (window.RulesService && window.RulesService.isSuperAdmin()) {
+    if (this.isSuperAdminUser()) {
       btn.classList.remove('hidden');
     } else {
       btn.classList.add('hidden');
     }
   },
 
-  openRulesEditor() {
-    const modal = document.getElementById('rules-editor-modal');
-    const textarea = document.getElementById('rules-editor-textarea');
-    if (window.RulesService && textarea) {
-      textarea.value = window.RulesService.getRawText();
+  renderAdminView() {
+    const container = document.getElementById('geo-rules-admin-container');
+    if (!container || !window.RulesService) return;
+    if (window.RulesService.renderAdminEditor) {
+      window.RulesService.renderAdminEditor(container);
     }
-    if (modal) modal.classList.remove('hidden');
+  },
+
+  async handleSaveAdminRules() {
+    const textarea = document.getElementById('geo-rules-textarea');
+    if (!textarea || !window.RulesService) return;
+    const btn = document.getElementById('btn-save-geo-rules');
+    const origHtml = btn ? btn.innerHTML : '';
+    if (btn) {
+      btn.disabled = true;
+      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> SALVATAGGIO...`;
+    }
+    try {
+      await window.RulesService.saveText(textarea.value);
+      if (btn) {
+        btn.innerHTML = `<i class="fa-solid fa-check"></i> SALVATO SU FIRESTORE!`;
+        btn.style.background = '#15803d';
+      }
+      setTimeout(() => {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = origHtml;
+          btn.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
+        }
+      }, 2000);
+    } catch (e) {
+      alert("⚠️ Errore salvataggio: " + e.message);
+      if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = origHtml;
+      }
+    }
+  },
+
+  handleResetAdminRules() {
+    if (!window.RulesService) return;
+    if (confirm("Vuoi ripristinare il testo predefinito del Regolamento?")) {
+      const textarea = document.getElementById('geo-rules-textarea');
+      if (textarea) {
+        textarea.value = window.RulesService.getDefaultText();
+      }
+    }
+  },
+
+  openRulesEditor() {
+    this.showView('view-admin');
   },
 
   closeRulesEditor() {

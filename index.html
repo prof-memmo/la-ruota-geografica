@@ -100,7 +100,7 @@
           </button>
 
           <!-- Pulsante Pannello Super-Admin (visibile per prof.memmo@gmail.com o admin) -->
-          <button class="dropdown-pill-btn btn-admin-gold hidden" id="btn-admin-dropdown" onclick="App.showView('view-admin')">
+          <button class="dropdown-pill-btn btn-admin-gold hidden" id="btn-admin-dropdown" onclick="App.showView('view-admin'); App.toggleUserDropdown();">
             <i class="fa-solid fa-crown"></i> Pannello Super-Admin
           </button>
 
@@ -290,6 +290,30 @@
       </div>
     </section>
 
+    <!-- 5. VIEW: PANNELLO SUPER-ADMIN (DASHBOARD CLOUD) -->
+    <section id="view-admin" class="app-view hidden">
+      <div class="setup-header-box" style="border-bottom: 2px solid var(--accent-geo); padding-bottom: 16px; margin-bottom: 25px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+          <div>
+            <span style="font-size: 0.75rem; font-weight: 800; background: rgba(245, 158, 11, 0.15); color: #d97706; border: 1px solid rgba(245, 158, 11, 0.3); padding: 5px 14px; border-radius: 50px; display: inline-flex; align-items: center; gap: 6px;">
+              <i class="fa-solid fa-crown"></i> SUPER-ADMIN CONSOLE
+            </span>
+            <h2 class="page-title" style="color: #0f172a; margin: 8px 0 0 0; font-size: 1.6rem;">Pannello di Amministrazione La Ruota Geografica</h2>
+            <p class="page-subtitle" style="margin: 4px 0 0 0;">Gestione e sincronizzazione in tempo reale del Regolamento Ufficiale su Firestore (<code>prof.memmo@gmail.com</code>).</p>
+          </div>
+          <div>
+            <button class="btn-choice" onclick="App.showView('view-game')" style="width: auto; padding: 8px 20px; font-size: 0.85rem; flex-direction: row; gap: 6px; border-radius: 50px;">
+              <i class="fa-solid fa-house"></i> Torna al Gioco
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div id="geo-rules-admin-container" style="max-width: 900px; margin: 0 auto; width: 100%;">
+        <!-- Popolato dinamicamente da RulesService.renderAdminEditor('geo-rules-admin-container') -->
+      </div>
+    </section>
+
     <!-- FOOTER DI COPYRIGHT PATAMU (ALTEZZA ESATTA 52PX) -->
     <footer class="view-footer-copyright">
       <div class="footer-legal-links">
@@ -323,6 +347,10 @@
     <a href="#" class="tab-item" data-view="view-regolamento" onclick="App.showView('view-regolamento'); return false;">
       <i class="fa-solid fa-scale-balanced"></i>
       <span>Regolamento</span>
+    </a>
+    <a href="#" class="tab-item hidden" id="tab-admin" data-view="view-admin" onclick="App.showView('view-admin'); return false;" title="Admin">
+      <i class="fa-solid fa-crown"></i>
+      <span>Admin</span>
     </a>
   </nav>
 
@@ -415,10 +443,10 @@
   </div>
 
   <!-- Scripts dell'Applicazione -->
-  <script src="js/music.js?v=20261018_profile_sso"></script>
-  <script src="js/cards-data.js?v=20261018_profile_sso"></script>
-  <script src="js/wheel-engine.js?v=20261018_profile_sso"></script>
-  <script src="js/rules-service.js?v=20261018_profile_sso"></script>
-  <script src="js/app.js?v=20261018_profile_sso"></script>
+  <script src="js/music.js?v=20261018_admin_panel"></script>
+  <script src="js/cards-data.js?v=20261018_admin_panel"></script>
+  <script src="js/wheel-engine.js?v=20261018_admin_panel"></script>
+  <script src="js/rules-service.js?v=20261018_admin_panel"></script>
+  <script src="js/app.js?v=20261018_admin_panel"></script>
 </body>
 </html>
