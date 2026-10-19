@@ -63,6 +63,42 @@
             <span class="user-trigger-name" id="header-user-name">ACCEDI</span>
             <span class="user-trigger-role" id="header-user-role">OSPITE</span>
           </div>
+          <script>
+            (function() {
+              try {
+                var candidateKeys = ['currentUser', 'user', 'teacherUser', 'hub_user', 'eroi_user_profile'];
+                var cached = null;
+                for (var i = 0; i < candidateKeys.length; i++) {
+                  var raw = localStorage.getItem(candidateKeys[i]);
+                  if (raw) {
+                    try {
+                      var parsed = JSON.parse(raw);
+                      if (parsed && (parsed.name || parsed.email)) { cached = parsed; break; }
+                    } catch(e) {}
+                  }
+                }
+                var ssoName = cached ? (cached.name || cached.displayName || cached.email.split('@')[0]) : (localStorage.getItem('hub_user_name') || localStorage.getItem('fanta_user_name') || localStorage.getItem('ruota_user_name'));
+                var ssoAvatar = (cached && cached.avatar) || localStorage.getItem('hub_user_avatar') || localStorage.getItem('fanta_user_avatar');
+                var ssoRole = (cached && cached.role) || localStorage.getItem('hub_user_role') || 'docente';
+                if (ssoName) {
+                  var isSuperAdmin = (cached && cached.email && cached.email.toLowerCase() === 'prof.memmo@gmail.com') || ssoRole === 'admin';
+                  var roleLabel = isSuperAdmin ? 'AMMINISTRATORE' : (ssoRole === 'studente' ? 'STUDENTE' : 'DOCENTE');
+                  var elN = document.getElementById('header-user-name');
+                  if (elN) elN.textContent = ssoName.toUpperCase();
+                  var elT = document.getElementById('dropdown-user-name');
+                  if (elT) elT.textContent = ssoName.toUpperCase();
+                  var elR = document.getElementById('header-user-role');
+                  if (elR) elR.textContent = roleLabel;
+                  var elSub = document.getElementById('dropdown-user-role-sub');
+                  if (elSub) elSub.textContent = roleLabel;
+                }
+                if (ssoAvatar) {
+                  var elA = document.getElementById('header-user-avatar');
+                  if (elA) elA.src = ssoAvatar;
+                }
+              } catch(e) {}
+            })();
+          </script>
           <span class="user-trigger-chevron"><i class="fa-solid fa-chevron-down"></i></span>
         </div>
 
