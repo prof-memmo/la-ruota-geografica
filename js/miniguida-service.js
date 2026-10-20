@@ -20,6 +20,11 @@
                 text: "Lo scopo del gioco è esplorare la geografia generale, la Terra nello spazio e il rapporto uomo-ambiente a squadre, sfidandosi a colpi di disegno, mimica, quiz, video-reel e narrazione."
             },
             {
+                icon: "🔑",
+                title: "Accesso al Gioco",
+                text: "<strong>Accesso rapido:</strong> effettua il login con il tuo account Docente (o Viandante) per sbloccare tutte le funzionalità.<br><br><strong>Nessuna classe da creare:</strong> per questo gioco non servono codici né account per gli studenti; si gioca subito a squadre direttamente alla LIM o su dispositivo condiviso!"
+            },
+            {
                 icon: "🧭",
                 title: "Come si Gioca",
                 text: "A ogni turno la squadra gira prima la Ruota Modalità per scoprire imprevisti e moltiplicatori, poi aziona la Ruota Categorie per affrontare la sfida didattica contro il tempo."
@@ -60,8 +65,22 @@
             return JSON.parse(JSON.stringify(DEFAULT_MINIGUIDA));
         },
 
+        ensureAccessStep(data) {
+            if (!data || !Array.isArray(data.steps)) return data;
+            const hasAccess = data.steps.some(s => 
+                (s.title && s.title.toLowerCase().includes('accesso')) ||
+                (s.text && s.text.toLowerCase().includes('accesso'))
+            );
+            if (!hasAccess && data.steps.length > 0) {
+                const accessStep = JSON.parse(JSON.stringify(DEFAULT_MINIGUIDA.steps[1]));
+                data.steps.splice(1, 0, accessStep);
+            }
+            return data;
+        },
+
         getData() {
-            return this._data || this.getDefaultData();
+            const raw = this._data || this.getDefaultData();
+            return this.ensureAccessStep(raw);
         },
 
         subscribe(callback) {
@@ -182,7 +201,7 @@
                             <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #64748b; margin-bottom: 4px;">Anteprima Live:</label>
                             <div style="background: white; border-radius: 16px; border: 1px solid #e2e8f0; padding: 15px; color: #1e293b; display: flex; overflow: hidden; box-shadow: 0 6px 20px rgba(0,0,0,0.06); min-height: 380px;">
                                 <div style="width: 35%; background: #f8fafc; display: flex; align-items: flex-end; justify-content: center; border-right: 1px solid #f1f5f9; padding-top: 10px;">
-                                    <img src="https://prof-memmo.github.io/prof-memmo-gestione-siti/shared/assets/branding/prof-memmo/prof-memmo-full.jpg" onerror="this.src='https://prof-memmo.github.io/prof-memmo-gestione-siti/shared/assets/branding/prof-memmo/prof-memmo-avatar.png';" alt="Prof Memmo" style="width: 120%; object-fit: contain; mix-blend-mode: multiply;">
+                                    <img src="assets/prof_memmo_full.png" onerror="this.src='https://prof-memmo.github.io/prof-memmo-gestione-siti/shared/assets/branding/prof-memmo/prof-memmo-full.png';" alt="Prof Memmo" style="width: 120%; object-fit: contain; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.15));">
                                 </div>
                                 <div style="flex: 1; padding: 10px 15px; display: flex; flex-direction: column; justify-content: space-between;">
                                     <div>
