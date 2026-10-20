@@ -58,6 +58,7 @@ const App = {
     // 6. Tasto Escape per chiudere tutti i modali
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
+        this.closeChallengeModal();
         this.closeMiniguida();
         this.closeRulesEditor();
         const modeModal = document.getElementById('mode-outcome-modal');
@@ -289,10 +290,25 @@ const App = {
     this.updateTimerDisplay();
     this.stopTimer();
 
-    // Scroll verso la carta prova
-    if (challengeBox) {
-      challengeBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }
+    // Apri carta prova in modale pop-up (Zero-Scroll stile L'Oratore / HistoryGram)
+    this.openChallengeModal();
+  },
+
+  openChallengeModal() {
+    const modal = document.getElementById('challenge-card-modal');
+    if (modal) modal.classList.remove('hidden');
+    const challengeBox = document.getElementById('challenge-card-box');
+    if (challengeBox) challengeBox.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+  },
+
+  closeChallengeModal() {
+    this.stopTimer();
+    const modal = document.getElementById('challenge-card-modal');
+    if (modal) modal.classList.add('hidden');
+    const challengeBox = document.getElementById('challenge-card-box');
+    if (challengeBox) challengeBox.classList.add('hidden');
+    document.body.style.overflow = '';
   },
 
   toggleTimer() {
@@ -347,15 +363,12 @@ const App = {
   },
 
   resetTurn() {
-    this.stopTimer();
+    this.closeChallengeModal();
     this.currentMode = null;
     this.currentCategory = null;
     this.currentCard = null;
     this.timerSecondsLeft = 60;
     this.updateTimerDisplay();
-
-    const challengeBox = document.getElementById('challenge-card-box');
-    if (challengeBox) challengeBox.classList.add('hidden');
 
     const btnFree = document.getElementById('btn-free-mode');
     if (btnFree) {

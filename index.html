@@ -332,37 +332,6 @@
         </div>
 
       </div>
-
-      <!-- Box Carta Prova Estratta (Inizialmente nascosto) -->
-      <div id="challenge-card-box" class="challenge-card-box hidden" style="max-width: 800px; margin: 20px auto 0 auto; width: 100%;">
-        <div class="challenge-header-badges">
-          <span class="badge-tag badge-cat" id="card-badge-cat">🎥 REEL</span>
-          <span class="badge-tag badge-mode" id="card-badge-mode">▶️ FREE</span>
-        </div>
-
-        <!-- Timer Standard 1 Minuto (60s) -->
-        <div class="timer-capsule" style="cursor: pointer;" onclick="App.toggleTimer()" title="Clicca per avviare/mettere in pausa il timer">
-          <i class="fa-solid fa-stopwatch" style="color: var(--accent-geo-light);"></i>
-          <span class="timer-count" id="timer-count">60s</span>
-        </div>
-
-        <div class="challenge-prompt-text" id="card-prompt-text">
-          Caricamento prova...
-        </div>
-
-        <p class="challenge-instructions" id="card-instructions">
-          Istruzioni per la spiegazione...
-        </p>
-
-        <div style="display: flex; gap: 12px; margin-top: 18px; justify-content: center; flex-wrap: wrap;">
-          <button class="btn-choice" id="btn-timer-toggle" onclick="App.toggleTimer()" style="width: auto; padding: 10px 20px; font-size: 0.9rem; flex-direction: row; gap: 8px;">
-            <i class="fa-solid fa-play"></i> Avvia Timer (60s)
-          </button>
-          <button class="btn-primary-glow" onclick="App.resetTurn()" style="width: auto; padding: 10px 24px; font-size: 0.9rem;">
-            <i class="fa-solid fa-forward-step"></i> Prossimo Turno
-          </button>
-        </div>
-      </div>
     </section>
 
     <!-- ==========================================
@@ -526,6 +495,41 @@
       <span>Admin</span>
     </a>
   </nav>
+
+  <!-- MODALE: CARTA PROVA ESTRATTA (ZERO-SCROLL POP-UP STILE L'ORATORE / HISTORYGRAM) -->
+  <div id="challenge-card-modal" class="app-modal-overlay hidden" onclick="if(event.target === this) App.closeChallengeModal()">
+    <div id="challenge-card-box" class="app-modal-content challenge-modal-card">
+      <span class="close-modal-btn" onclick="App.closeChallengeModal()" title="Chiudi Carta">&times;</span>
+
+      <div class="challenge-header-badges">
+        <span class="badge-tag badge-cat" id="card-badge-cat">🎥 REEL</span>
+        <span class="badge-tag badge-mode" id="card-badge-mode">▶️ FREE</span>
+      </div>
+
+      <!-- Timer Standard 1 Minuto (60s) -->
+      <div class="timer-capsule" style="cursor: pointer; margin: 0 auto;" onclick="App.toggleTimer()" title="Clicca per avviare/mettere in pausa il timer">
+        <i class="fa-solid fa-stopwatch" style="color: var(--accent-geo-light);"></i>
+        <span class="timer-count" id="timer-count">60s</span>
+      </div>
+
+      <div class="challenge-prompt-text" id="card-prompt-text">
+        Caricamento prova...
+      </div>
+
+      <p class="challenge-instructions" id="card-instructions">
+        Istruzioni per la spiegazione...
+      </p>
+
+      <div style="display: flex; gap: 12px; margin-top: 10px; justify-content: center; flex-wrap: wrap;">
+        <button class="btn-choice" id="btn-timer-toggle" onclick="App.toggleTimer()" style="width: auto; padding: 10px 20px; font-size: 0.9rem; flex-direction: row; gap: 8px;">
+          <i class="fa-solid fa-play"></i> Avvia Timer (60s)
+        </button>
+        <button class="btn-primary-glow" onclick="App.resetTurn()" style="width: auto; padding: 10px 24px; font-size: 0.9rem;">
+          <i class="fa-solid fa-forward-step"></i> Prossimo Turno
+        </button>
+      </div>
+    </div>
+  </div>
 
   <!-- MODALE: MINIGUIDA A 6 STEP CANONICI DELL'ECOSISTEMA -->
   <div id="modalMiniguida" class="app-modal-overlay hidden" onclick="if(event.target === this) App.closeMiniguida()">
