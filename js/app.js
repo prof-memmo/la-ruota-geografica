@@ -660,6 +660,22 @@ const App = {
     return role === 'admin' || role === 'AMMINISTRATORE';
   },
 
+  resolveAvatarUrl(rawAvatar, isSuperAdmin, name) {
+    const isMemmo = isSuperAdmin || (name && name.toUpperCase().includes('MEMMO'));
+    if (isMemmo) {
+      return 'https://prof-memmo.github.io/prof-memmo-gestione-siti/shared/assets/branding/prof-memmo/prof-memmo-avatar.png';
+    }
+    if (!rawAvatar) {
+      return 'https://prof-memmo.github.io/prof-memmo-gestione-siti/shared/assets/branding/prof-memmo/prof-memmo-avatar.png';
+    }
+    if (rawAvatar.startsWith('http://') || rawAvatar.startsWith('https://')) {
+      return rawAvatar;
+    }
+    const clean = rawAvatar.replace(/^(\/?assets\/avatars\/|\/?shared\/assets\/avatars\/)/, '');
+    const file = clean.endsWith('.png') ? clean : `${clean}.png`;
+    return `https://prof-memmo.github.io/prof-memmo-gestione-siti/shared/assets/avatars/${file}`;
+  },
+
   setupHeaderProfile() {
     const nameEl = document.getElementById('header-user-name');
     const roleEl = document.getElementById('header-user-role');
@@ -668,15 +684,15 @@ const App = {
     const avatarEl = document.getElementById('header-user-avatar');
     const btnLogin = document.getElementById('btn-login-hub-dropdown');
     const btnProfile = document.getElementById('btn-profile-dropdown');
-    const btnAdmin = document.getElementById('btn-admin-dropdown');
     const btnLogout = document.getElementById('btn-logout-dropdown');
 
     const applyProfileData = (name, role, avatar, isAuth, isSuperAdmin) => {
+      const finalAvatar = this.resolveAvatarUrl(avatar, isSuperAdmin, name);
       if (nameEl) nameEl.textContent = name;
       if (dropNameEl) dropNameEl.textContent = name;
       if (roleEl) roleEl.textContent = role;
       if (dropRoleEl) dropRoleEl.textContent = role;
-      if (avatarEl && avatar) avatarEl.src = avatar;
+      if (avatarEl && finalAvatar) avatarEl.src = finalAvatar;
 
       if (isAuth) {
         if (btnLogin) btnLogin.classList.add('hidden');
@@ -689,33 +705,32 @@ const App = {
 
       const adminTab = document.getElementById('tab-admin');
       if (isSuperAdmin) {
-        if (btnAdmin) btnAdmin.classList.remove('hidden');
         if (adminTab) adminTab.classList.remove('hidden');
       } else {
-        if (btnAdmin) btnAdmin.classList.add('hidden');
         if (adminTab) adminTab.classList.add('hidden');
       }
       this.checkLiveEditorButton();
     };
 
-    // 1. Fallback da localStorage
-    const candidateKeys = ['currentUser', 'user', 'teacherUser', 'hub_user', 'eroi_user_profile'];
+    // 1. Fallback da localStorage con supporto multi-chiave dell'ecosistema
+    const candidateKeys = ['corte_user', 'hub_user', 'currentUser', 'user', 'teacherUser', 'eroi_user_profile', 'fanta_user'];
     let cachedUser = null;
     for (const k of candidateKeys) {
       try {
         const raw = localStorage.getItem(k);
         if (raw) {
           cachedUser = JSON.parse(raw);
-          if (cachedUser && (cachedUser.name || cachedUser.email)) break;
+          if (cachedUser && (cachedUser.name || cachedUser.email || cachedUser.displayName)) break;
         }
       } catch (e) {}
     }
 
-    if (cachedUser && (cachedUser.name || cachedUser.email)) {
-      const isSuperAdmin = (cachedUser.email && cachedUser.email.toLowerCase() === 'prof.memmo@gmail.com') || cachedUser.role === 'admin';
-      const name = (cachedUser.name || cachedUser.email.split('@')[0]).toUpperCase();
-      const role = (isSuperAdmin ? 'AMMINISTRATORE' : (cachedUser.role || 'DOCENTE')).toUpperCase();
-      const avatar = cachedUser.avatar || localStorage.getItem('hub_user_avatar') || 'https://prof-memmo.github.io/prof-memmo-gestione-siti/shared/assets/avatars/6.png';
+    if (cachedUser && (cachedUser.name || cachedUser.email || cachedUser.displayName)) {
+      const rawName = cachedUser.name || cachedUser.displayName || (cachedUser.anagrafica && cachedUser.anagrafica.nome) || (cachedUser.email ? cachedUser.email.split('@')[0] : 'OSPITE');
+      const isSuperAdmin = (cachedUser.email && cachedUser.email.toLowerCase() === 'prof.memmo@gmail.com') || cachedUser.role === 'admin' || rawName.toUpperCase().includes('MEMMO');
+      const name = (isSuperAdmin ? 'PROF. MEMMO' : rawName).toUpperCase();
+      const role = (isSuperAdmin ? 'AMMINISTRATORE' : (cachedUser.role || cachedUser.ruolo || 'DOCENTE')).toUpperCase();
+      const avatar = this.resolveAvatarUrl(cachedUser.avatar || localStorage.getItem('hub_user_avatar'), isSuperAdmin, name);
       applyProfileData(name, role, avatar, true, isSuperAdmin);
       try {
         localStorage.setItem('hub_user_name', name);
@@ -727,10 +742,11 @@ const App = {
       const savedRole = localStorage.getItem('hub_user_role');
       const savedAvatar = localStorage.getItem('hub_user_avatar');
       if (savedName) {
-        const isSuperAdmin = savedRole === 'admin' || savedRole === 'AMMINISTRATORE';
-        applyProfileData(savedName.toUpperCase(), (savedRole || 'DOCENTE').toUpperCase(), savedAvatar || 'https://prof-memmo.github.io/prof-memmo-gestione-siti/shared/assets/avatars/6.png', true, isSuperAdmin);
+        const isSuperAdmin = savedRole === 'admin' || savedRole === 'AMMINISTRATORE' || savedName.toUpperCase().includes('MEMMO');
+        const resolvedAvatar = this.resolveAvatarUrl(savedAvatar, isSuperAdmin, savedName);
+        applyProfileData(savedName.toUpperCase(), (savedRole || 'DOCENTE').toUpperCase(), resolvedAvatar, true, isSuperAdmin);
       } else {
-        applyProfileData('ACCEDI', 'OSPITE', 'https://prof-memmo.github.io/prof-memmo-gestione-siti/shared/assets/avatars/6.png', false, false);
+        applyProfileData('ACCEDI', 'OSPITE', 'https://prof-memmo.github.io/prof-memmo-gestione-siti/shared/assets/branding/prof-memmo/prof-memmo-avatar.png', false, false);
       }
     }
 
@@ -773,21 +789,18 @@ const App = {
             }
           }
 
-          if (!userAvatar) {
-            userAvatar = 'https://prof-memmo.github.io/prof-memmo-gestione-siti/shared/assets/avatars/6.png';
-          }
-
-          applyProfileData(displayName, userRole, userAvatar, true, isSuperAdmin);
+          const resolvedAvatar = this.resolveAvatarUrl(userAvatar, isSuperAdmin, displayName);
+          applyProfileData(displayName, userRole, resolvedAvatar, true, isSuperAdmin);
 
           try {
             localStorage.setItem('hub_user_name', displayName);
             localStorage.setItem('hub_user_role', userRole);
-            localStorage.setItem('hub_user_avatar', userAvatar);
+            localStorage.setItem('hub_user_avatar', resolvedAvatar);
           } catch(e) {}
         } else {
           this.currentUser = null;
           let hasLocalIdentity = false;
-          const checkKeys = ['hub_user_name', 'currentUser', 'user', 'teacherUser', 'hub_user', 'eroi_user_profile'];
+          const checkKeys = ['hub_user_name', 'corte_user', 'currentUser', 'user', 'teacherUser', 'hub_user', 'eroi_user_profile'];
           for (const k of checkKeys) {
             try {
               if (localStorage.getItem(k)) {
@@ -797,7 +810,7 @@ const App = {
             } catch(e) {}
           }
           if (!hasLocalIdentity) {
-            applyProfileData('ACCEDI', 'OSPITE', 'https://prof-memmo.github.io/prof-memmo-gestione-siti/shared/assets/avatars/6.png', false, false);
+            applyProfileData('ACCEDI', 'OSPITE', 'https://prof-memmo.github.io/prof-memmo-gestione-siti/shared/assets/branding/prof-memmo/prof-memmo-avatar.png', false, false);
           }
         }
       });

@@ -63,7 +63,7 @@
         <!-- Trigger Pill -->
         <div class="user-menu-trigger" id="user-menu-trigger" onclick="App.toggleUserDropdown(event)">
           <div class="user-avatar-circle">
-            <img id="header-user-avatar" src="https://prof-memmo.github.io/prof-memmo-gestione-siti/shared/assets/avatars/6.png" alt="Avatar" onerror="this.src='https://prof-memmo.github.io/prof-memmo-gestione-siti/shared/assets/branding/prof-memmo/prof-memmo-avatar.png'">
+            <img id="header-user-avatar" src="https://prof-memmo.github.io/prof-memmo-gestione-siti/shared/assets/branding/prof-memmo/prof-memmo-avatar.png" alt="Avatar" onerror="this.src='https://prof-memmo.github.io/prof-memmo-gestione-siti/shared/assets/branding/prof-memmo/prof-memmo-avatar.png'">
           </div>
           <div class="user-trigger-text">
             <span class="user-trigger-name" id="header-user-name">ACCEDI</span>
@@ -72,22 +72,38 @@
           <script>
             (function() {
               try {
-                var candidateKeys = ['currentUser', 'user', 'teacherUser', 'hub_user', 'eroi_user_profile'];
+                var candidateKeys = ['corte_user', 'hub_user', 'currentUser', 'user', 'teacherUser', 'eroi_user_profile', 'fanta_user'];
                 var cached = null;
                 for (var i = 0; i < candidateKeys.length; i++) {
                   var raw = localStorage.getItem(candidateKeys[i]);
                   if (raw) {
                     try {
                       var parsed = JSON.parse(raw);
-                      if (parsed && (parsed.name || parsed.email)) { cached = parsed; break; }
+                      if (parsed && (parsed.name || parsed.email || parsed.displayName)) { cached = parsed; break; }
                     } catch(e) {}
                   }
                 }
-                var ssoName = cached ? (cached.name || cached.displayName || cached.email.split('@')[0]) : (localStorage.getItem('hub_user_name') || localStorage.getItem('fanta_user_name') || localStorage.getItem('ruota_user_name'));
-                var ssoAvatar = (cached && cached.avatar) || localStorage.getItem('hub_user_avatar') || localStorage.getItem('fanta_user_avatar');
-                var ssoRole = (cached && cached.role) || localStorage.getItem('hub_user_role') || 'docente';
+                var ssoName = cached ? (cached.name || cached.displayName || (cached.anagrafica && cached.anagrafica.nome) || (cached.email && cached.email.split('@')[0])) : (localStorage.getItem('hub_user_name') || localStorage.getItem('fanta_user_name') || localStorage.getItem('ruota_user_name'));
+                var rawAvatar = (cached && cached.avatar) || localStorage.getItem('hub_user_avatar') || localStorage.getItem('fanta_user_avatar');
+                var ssoRole = (cached && (cached.role || cached.ruolo)) || localStorage.getItem('hub_user_role') || 'docente';
+                var isSuperAdmin = (cached && cached.email && cached.email.toLowerCase() === 'prof.memmo@gmail.com') || ssoRole === 'admin' || (ssoName && ssoName.toUpperCase().includes('MEMMO'));
+                
+                function normalizeAvatar(raw, isSuper) {
+                  if (isSuper) {
+                    return 'https://prof-memmo.github.io/prof-memmo-gestione-siti/shared/assets/branding/prof-memmo/prof-memmo-avatar.png';
+                  }
+                  if (!raw) {
+                    return 'https://prof-memmo.github.io/prof-memmo-gestione-siti/shared/assets/branding/prof-memmo/prof-memmo-avatar.png';
+                  }
+                  if (raw.indexOf('http://') === 0 || raw.indexOf('https://') === 0) {
+                    return raw;
+                  }
+                  var clean = raw.replace(/^(\/?assets\/avatars\/|\/?shared\/assets\/avatars\/)/, '');
+                  if (clean.indexOf('.png') === -1) clean += '.png';
+                  return 'https://prof-memmo.github.io/prof-memmo-gestione-siti/shared/assets/avatars/' + clean;
+                }
+
                 if (ssoName) {
-                  var isSuperAdmin = (cached && cached.email && cached.email.toLowerCase() === 'prof.memmo@gmail.com') || ssoRole === 'admin';
                   var roleLabel = isSuperAdmin ? 'AMMINISTRATORE' : (ssoRole === 'studente' ? 'STUDENTE' : 'DOCENTE');
                   var elN = document.getElementById('header-user-name');
                   if (elN) elN.textContent = ssoName.toUpperCase();
@@ -98,10 +114,9 @@
                   var elSub = document.getElementById('dropdown-user-role-sub');
                   if (elSub) elSub.textContent = roleLabel;
                 }
-                if (ssoAvatar) {
-                  var elA = document.getElementById('header-user-avatar');
-                  if (elA) elA.src = ssoAvatar;
-                }
+                var resolvedAvatar = normalizeAvatar(rawAvatar, isSuperAdmin);
+                var elA = document.getElementById('header-user-avatar');
+                if (elA && resolvedAvatar) elA.src = resolvedAvatar;
               } catch(e) {}
             })();
           </script>
@@ -139,11 +154,6 @@
           <!-- Pulsante Profilo Hub (visibile se autenticato) -->
           <button class="dropdown-pill-btn hidden" id="btn-profile-dropdown" onclick="window.open('https://prof-memmo.github.io/games/profilo.html', '_blank')">
             <i class="fa-solid fa-user-gear"></i> Gestisci Profilo Hub
-          </button>
-
-          <!-- Pulsante Pannello Super-Admin (visibile per prof.memmo@gmail.com o admin) -->
-          <button class="dropdown-pill-btn btn-admin-gold hidden" id="btn-admin-dropdown" onclick="App.showView('view-admin'); App.toggleUserDropdown();">
-            <i class="fa-solid fa-crown"></i> Pannello Super-Admin
           </button>
 
           <button class="dropdown-pill-btn" onclick="if(window.openSharedModal) window.openSharedModal('invita');">
