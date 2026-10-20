@@ -441,38 +441,6 @@ const App = {
    * Miniguida a 6 Step Canonici (Ecosistema Standard)
    * ------------------------------------------------------------- */
   miniguidaStep: 0,
-  miniguidaSteps: [
-    {
-      icon: "🎯",
-      title: "Scopo del Gioco",
-      desc: "Lo scopo del gioco è esplorare la geografia generale, la Terra nello spazio e il rapporto uomo-ambiente a squadre, sfidandosi a colpi di disegno, mimica, quiz, video-reel e narrazione."
-    },
-    {
-      icon: "🧭",
-      title: "Come si Gioca",
-      desc: "A ogni turno la squadra gira prima la Ruota Modalità per scoprire imprevisti e moltiplicatori, poi aziona la Ruota Categorie per affrontare la sfida didattica contro il tempo."
-    },
-    {
-      icon: "🏠",
-      title: "Home",
-      desc: "Dalla schermata iniziale puoi avviare una nuova sfida per la classe scegliendo il percorso tematico, oppure consultare il regolamento didattico."
-    },
-    {
-      icon: "🎡",
-      title: "La Ruota",
-      desc: "Nella plancia a schermo intero trovi le due ruote affiancate: gira la ruota delle modalità e quella delle categorie, leggi la prova e fai partire il timer di 1 minuto!"
-    },
-    {
-      icon: "🏆",
-      title: "Tabellone",
-      desc: "Accedi al Tabellone per registrare i punti delle squadre, aggiungere nuovi gruppi della classe e seguire la classifica in tempo reale."
-    },
-    {
-      icon: "📜",
-      title: "Regolamento",
-      desc: "Consulta il Regolamento per scoprire tutti i dettagli delle 8 categorie espressive, le modalità speciali e le indicazioni pedagogiche di Prof. Memmo.<br><br><em>Consulta il regolamento per saperne di più.</em>"
-    }
-  ],
 
   openMiniguida() {
     this.miniguidaStep = 0;
@@ -503,7 +471,7 @@ const App = {
         }));
       }
     }
-    return this.miniguidaSteps;
+    return [];
   },
 
   nextMiniguidaStep() {

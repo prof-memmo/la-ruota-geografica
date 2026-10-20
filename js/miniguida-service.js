@@ -49,7 +49,7 @@
 
     const GeoMiniguidaService = {
         _gameKey: 'ruota',
-        _collectionName: 'ruota_settings',
+        _collectionName: 'la-ruota-geografica_settings',
         _docId: 'miniguida',
         _storageKey: 'ruota_miniguida_data',
         _data: null,
