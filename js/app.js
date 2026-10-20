@@ -661,19 +661,25 @@ const App = {
   },
 
   resolveAvatarUrl(rawAvatar, isSuperAdmin, name) {
+    if (typeof window.resolveEcosystemAvatar === 'function') {
+      return window.resolveEcosystemAvatar(rawAvatar, isSuperAdmin, name);
+    }
+    if (rawAvatar && typeof rawAvatar === 'string' && rawAvatar.trim() !== '') {
+      if (rawAvatar.startsWith('http://') || rawAvatar.startsWith('https://')) {
+        return rawAvatar;
+      }
+      const clean = rawAvatar.replace(/^(\/?assets\/avatars\/|\/?shared\/assets\/avatars\/)/, '');
+      if (!clean.includes('/')) {
+        const file = clean.endsWith('.png') ? clean : `${clean}.png`;
+        return `https://prof-memmo.github.io/prof-memmo-gestione-siti/shared/assets/avatars/${file}`;
+      }
+      return rawAvatar;
+    }
     const isMemmo = isSuperAdmin || (name && name.toUpperCase().includes('MEMMO'));
     if (isMemmo) {
       return 'https://prof-memmo.github.io/prof-memmo-gestione-siti/shared/assets/branding/prof-memmo/prof-memmo-avatar.png';
     }
-    if (!rawAvatar) {
-      return 'https://prof-memmo.github.io/prof-memmo-gestione-siti/shared/assets/branding/prof-memmo/prof-memmo-avatar.png';
-    }
-    if (rawAvatar.startsWith('http://') || rawAvatar.startsWith('https://')) {
-      return rawAvatar;
-    }
-    const clean = rawAvatar.replace(/^(\/?assets\/avatars\/|\/?shared\/assets\/avatars\/)/, '');
-    const file = clean.endsWith('.png') ? clean : `${clean}.png`;
-    return `https://prof-memmo.github.io/prof-memmo-gestione-siti/shared/assets/avatars/${file}`;
+    return 'https://prof-memmo.github.io/prof-memmo-gestione-siti/shared/assets/avatars/6.png';
   },
 
   setupHeaderProfile() {

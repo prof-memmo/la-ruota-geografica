@@ -88,19 +88,25 @@
                 var ssoRole = (cached && (cached.role || cached.ruolo)) || localStorage.getItem('hub_user_role') || 'docente';
                 var isSuperAdmin = (cached && cached.email && cached.email.toLowerCase() === 'prof.memmo@gmail.com') || ssoRole === 'admin' || (ssoName && ssoName.toUpperCase().includes('MEMMO'));
                 
-                function normalizeAvatar(raw, isSuper) {
-                  if (isSuper) {
-                    return 'https://prof-memmo.github.io/prof-memmo-gestione-siti/shared/assets/branding/prof-memmo/prof-memmo-avatar.png';
+                function normalizeAvatar(raw, isSuper, name) {
+                  if (typeof window.resolveEcosystemAvatar === 'function') {
+                    return window.resolveEcosystemAvatar(raw, isSuper, name);
                   }
-                  if (!raw) {
-                    return 'https://prof-memmo.github.io/prof-memmo-gestione-siti/shared/assets/branding/prof-memmo/prof-memmo-avatar.png';
-                  }
-                  if (raw.indexOf('http://') === 0 || raw.indexOf('https://') === 0) {
+                  if (raw && typeof raw === 'string' && raw.trim() !== '') {
+                    if (raw.indexOf('http://') === 0 || raw.indexOf('https://') === 0) {
+                      return raw;
+                    }
+                    var clean = raw.replace(/^(\/?assets\/avatars\/|\/?shared\/assets\/avatars\/)/, '');
+                    if (clean.indexOf('/') === -1) {
+                      if (clean.indexOf('.png') === -1) clean += '.png';
+                      return 'https://prof-memmo.github.io/prof-memmo-gestione-siti/shared/assets/avatars/' + clean;
+                    }
                     return raw;
                   }
-                  var clean = raw.replace(/^(\/?assets\/avatars\/|\/?shared\/assets\/avatars\/)/, '');
-                  if (clean.indexOf('.png') === -1) clean += '.png';
-                  return 'https://prof-memmo.github.io/prof-memmo-gestione-siti/shared/assets/avatars/' + clean;
+                  if (isSuper || (name && name.toUpperCase().indexOf('MEMMO') !== -1)) {
+                    return 'https://prof-memmo.github.io/prof-memmo-gestione-siti/shared/assets/branding/prof-memmo/prof-memmo-avatar.png';
+                  }
+                  return 'https://prof-memmo.github.io/prof-memmo-gestione-siti/shared/assets/avatars/6.png';
                 }
 
                 if (ssoName) {
@@ -114,7 +120,7 @@
                   var elSub = document.getElementById('dropdown-user-role-sub');
                   if (elSub) elSub.textContent = roleLabel;
                 }
-                var resolvedAvatar = normalizeAvatar(rawAvatar, isSuperAdmin);
+                var resolvedAvatar = normalizeAvatar(rawAvatar, isSuperAdmin, ssoName);
                 var elA = document.getElementById('header-user-avatar');
                 if (elA && resolvedAvatar) elA.src = resolvedAvatar;
               } catch(e) {}
