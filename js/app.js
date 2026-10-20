@@ -717,6 +717,11 @@ const App = {
       const role = (isSuperAdmin ? 'AMMINISTRATORE' : (cachedUser.role || 'DOCENTE')).toUpperCase();
       const avatar = cachedUser.avatar || localStorage.getItem('hub_user_avatar') || 'https://prof-memmo.github.io/prof-memmo-gestione-siti/shared/assets/avatars/6.png';
       applyProfileData(name, role, avatar, true, isSuperAdmin);
+      try {
+        localStorage.setItem('hub_user_name', name);
+        localStorage.setItem('hub_user_role', role);
+        localStorage.setItem('hub_user_avatar', avatar);
+      } catch (e) {}
     } else {
       const savedName = localStorage.getItem('hub_user_name');
       const savedRole = localStorage.getItem('hub_user_role');
@@ -781,8 +786,17 @@ const App = {
           } catch(e) {}
         } else {
           this.currentUser = null;
-          const savedName = localStorage.getItem('hub_user_name');
-          if (!savedName) {
+          let hasLocalIdentity = false;
+          const checkKeys = ['hub_user_name', 'currentUser', 'user', 'teacherUser', 'hub_user', 'eroi_user_profile'];
+          for (const k of checkKeys) {
+            try {
+              if (localStorage.getItem(k)) {
+                hasLocalIdentity = true;
+                break;
+              }
+            } catch(e) {}
+          }
+          if (!hasLocalIdentity) {
             applyProfileData('ACCEDI', 'OSPITE', 'https://prof-memmo.github.io/prof-memmo-gestione-siti/shared/assets/avatars/6.png', false, false);
           }
         }
