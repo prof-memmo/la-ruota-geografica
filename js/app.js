@@ -59,6 +59,7 @@ const App = {
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
         this.closeChallengeModal();
+        this.closeSavedGamesModal();
         this.closeMiniguida();
         this.closeRulesEditor();
         const modeModal = document.getElementById('mode-outcome-modal');
@@ -148,6 +149,7 @@ const App = {
 
     this.resetTurn();
     this.showView('view-game');
+    this.saveCurrentGame();
   },
 
   /* -------------------------------------------------------------
@@ -415,12 +417,14 @@ const App = {
     const num = this.teams.length + 1;
     this.teams.push({ name: `Squadra ${num}`, score: 0 });
     this.renderScoreboard();
+    this.saveCurrentGame();
   },
 
   addScore(teamIndex, delta) {
     if (this.teams[teamIndex]) {
       this.teams[teamIndex].score = Math.max(0, this.teams[teamIndex].score + delta);
       this.renderScoreboard();
+      this.saveCurrentGame();
     }
   },
 
@@ -428,13 +432,144 @@ const App = {
     if (confirm("Vuoi davvero azzerare i punteggi di tutte le squadre?")) {
       this.teams.forEach(t => t.score = 0);
       this.renderScoreboard();
+      this.saveCurrentGame();
     }
   },
 
   renameTeam(teamIndex, newName) {
     if (this.teams[teamIndex] && newName && newName.trim().length > 0) {
       this.teams[teamIndex].name = newName.trim();
+      this.saveCurrentGame();
     }
+  },
+
+  /* -------------------------------------------------------------
+   * Gestione Sessioni Salvate ("Riprendi Partita" - Stile L'Oratore / HistoryGram)
+   * ------------------------------------------------------------- */
+  savedGamesKey: 'ruota_saved_games',
+
+  getSavedGames() {
+    try {
+      const raw = localStorage.getItem(this.savedGamesKey);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) return parsed;
+      }
+    } catch(e) {
+      console.warn("Errore lettura partite salvate:", e);
+    }
+    return [];
+  },
+
+  saveCurrentGame() {
+    const topicObj = (window.THEMATIC_TOPICS || []).find(t => t.id === this.currentTopic) || { title: 'Geografia Generale', icon: '🌌' };
+    const session = {
+      id: 'session_' + Date.now(),
+      timestamp: Date.now(),
+      dateStr: new Date().toLocaleDateString('it-IT', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }),
+      topic: this.currentTopic,
+      topicTitle: topicObj.title,
+      topicIcon: topicObj.icon,
+      teams: JSON.parse(JSON.stringify(this.teams))
+    };
+
+    const list = this.getSavedGames().filter(s => s.id !== session.id);
+    list.unshift(session);
+    if (list.length > 10) list.length = 10;
+    try {
+      localStorage.setItem(this.savedGamesKey, JSON.stringify(list));
+    } catch(e) {}
+    return session;
+  },
+
+  openSavedGamesModal() {
+    this.renderSavedGamesList();
+    const modal = document.getElementById('savedGamesModal');
+    if (modal) {
+      modal.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    }
+  },
+
+  closeSavedGamesModal() {
+    const modal = document.getElementById('savedGamesModal');
+    if (modal) {
+      modal.classList.add('hidden');
+      document.body.style.overflow = '';
+    }
+  },
+
+  resumeSavedGame(sessionId) {
+    const list = this.getSavedGames();
+    const session = list.find(s => s.id === sessionId);
+    if (!session) return;
+
+    this.currentTopic = session.topic || 'astronomia';
+    this.teams = session.teams || [
+      { name: "Squadra 1", score: 0 },
+      { name: "Squadra 2", score: 0 }
+    ];
+
+    const topicObj = (window.THEMATIC_TOPICS || []).find(t => t.id === this.currentTopic);
+    const titleEl = document.getElementById('active-topic-title');
+    const subEl = document.getElementById('active-topic-sub');
+    const iconEl = document.getElementById('active-topic-icon');
+    if (titleEl && topicObj) titleEl.textContent = topicObj.title;
+    if (subEl && topicObj) subEl.textContent = topicObj.subtitle;
+    if (iconEl && topicObj) iconEl.textContent = topicObj.icon;
+
+    this.renderScoreboard();
+    this.closeSavedGamesModal();
+    this.showView('view-game');
+  },
+
+  deleteSavedGame(sessionId, e) {
+    if (e) e.stopPropagation();
+    if (!confirm("Vuoi davvero eliminare questa sessione salvata?")) return;
+    const list = this.getSavedGames().filter(s => s.id !== sessionId);
+    try {
+      localStorage.setItem(this.savedGamesKey, JSON.stringify(list));
+    } catch(e) {}
+    this.renderSavedGamesList();
+  },
+
+  renderSavedGamesList() {
+    const container = document.getElementById('savedGamesList');
+    if (!container) return;
+
+    const list = this.getSavedGames();
+    if (list.length === 0) {
+      container.innerHTML = `
+        <div style="text-align: center; padding: 36px 16px; color: var(--text-muted);">
+          <div style="font-size: 2.8rem; margin-bottom: 12px; color: #94a3b8;"><i class="fa-regular fa-folder-open"></i></div>
+          <p style="font-size: 1rem; font-weight: 700; color: #0f172a; margin-bottom: 6px;">Nessuna sessione salvata</p>
+          <p style="font-size: 0.85rem; color: #64748b; max-width: 360px; margin: 0 auto;">Quando inizi una sfida o assegni punti alle squadre, la partita viene salvata per essere ripresa in qualsiasi momento.</p>
+        </div>
+      `;
+      return;
+    }
+
+    container.innerHTML = list.map(s => `
+      <div class="saved-game-item" onclick="App.resumeSavedGame('${s.id}')">
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <div style="font-size: 2rem;">${s.topicIcon || '🌌'}</div>
+          <div>
+            <div style="font-weight: 800; font-size: 0.98rem; color: #0f172a;">${s.topicTitle || 'Geografia'}</div>
+            <div style="font-size: 0.78rem; color: var(--text-light); margin-top: 3px;">
+              <i class="fa-regular fa-calendar"></i> ${s.dateStr || ''} &bull; ${(s.teams || []).map(t => `${t.name} (${t.score} pt)`).join(' &bull; ')}
+            </div>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <button class="btn-primary-glow" style="width: auto; padding: 6px 16px; font-size: 0.82rem; pointer-events: none;">
+            Riprendi ➔
+          </button>
+          <button class="btn-choice" style="width: auto; padding: 6px 12px; font-size: 0.82rem; color: #ef4444;" onclick="App.deleteSavedGame('${s.id}', event)" title="Elimina Sessione">
+            <i class="fa-solid fa-trash-can"></i>
+          </button>
+        </div>
+      </div>
+    `).join('');
   },
 
   /* -------------------------------------------------------------

@@ -31,11 +31,11 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  font-family: 'Julius Sans One', sans-serif !important;
+  font-family: 'Julius Sans One', sans-serif;
 }
 
 body {
-  font-family: 'Julius Sans One', sans-serif !important;
+  font-family: 'Julius Sans One', sans-serif;
   background-color: var(--bg-main);
   background-image: 
     radial-gradient(circle at 15% 20%, rgba(14, 165, 233, 0.05) 0%, transparent 40%),
@@ -46,8 +46,30 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-button, input, textarea, select, a, span, p, h1, h2, h3, h4, h5, h6 {
-  font-family: 'Julius Sans One', sans-serif !important;
+/* Protezione Assoluta FontAwesome: garantisce la corretta visualizzazione di tutte le icone */
+.fa, .fas, .far, .fab, .fa-solid, .fa-regular, .fa-brands, [class*="fa-"], [class*="fa-"]::before, [class*="fa-"]::after {
+  font-family: "Font Awesome 6 Free", "Font Awesome 6 Brands" !important;
+  font-style: normal;
+  font-variant: normal;
+  text-rendering: auto;
+  line-height: 1;
+}
+
+.fa-solid, [class*="fa-solid"]::before {
+  font-weight: 900 !important;
+}
+
+.fa-regular, [class*="fa-regular"]::before {
+  font-weight: 400 !important;
+}
+
+.fa-brands, [class*="fa-brands"]::before {
+  font-family: "Font Awesome 6 Brands" !important;
+  font-weight: 400 !important;
+}
+
+button, input, textarea, select, a, span:not([class*="fa-"]), p, h1, h2, h3, h4, h5, h6 {
+  font-family: 'Julius Sans One', sans-serif;
 }
 
 .hidden, [hidden] {
@@ -438,16 +460,95 @@ button, input, textarea, select, a, span, p, h1, h2, h3, h4, h5, h6 {
 }
 
 .btn-giant {
-  padding: 14px 32px !important;
-  font-size: 1.05rem !important;
+  padding: 12px 28px !important;
+  font-size: 0.95rem !important;
   border-radius: 50px !important;
   font-family: var(--font-heading);
   font-weight: 800;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  justify-content: center;
+  gap: 8px;
   transition: all 0.25s ease;
+  width: auto;
+}
+
+/* Pulsanti Welcome Dimensionati Correttamente (Stile L'Oratore / HistoryGram) */
+.btn-welcome-primary {
+  background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 50px;
+  padding: 12px 28px;
+  font-size: 0.95rem;
+  font-weight: 800;
+  font-family: var(--font-heading);
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(14, 165, 233, 0.3);
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: auto;
+  min-width: 200px;
+}
+
+.btn-welcome-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(14, 165, 233, 0.45);
+}
+
+.btn-welcome-secondary {
+  background: #ffffff;
+  color: #0f172a;
+  border: 1.5px solid var(--border-subtle);
+  border-radius: 50px;
+  padding: 12px 28px;
+  font-size: 0.95rem;
+  font-weight: 800;
+  font-family: var(--font-heading);
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: auto;
+  min-width: 200px;
+}
+
+.btn-welcome-secondary:hover {
+  border-color: var(--accent-geo);
+  background: #f8fafc;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+}
+
+/* Item Sessioni Salvate */
+.saved-game-item {
+  background: #ffffff;
+  border: 1px solid var(--border-subtle);
+  border-radius: 16px;
+  padding: 14px 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+}
+
+.saved-game-item:hover {
+  border-color: var(--accent-geo);
+  background: #f0f9ff;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(14, 165, 233, 0.12);
 }
 
 /* Setup Scelta Percorso Tematico (Passo 1 Stile HistoryGram) */

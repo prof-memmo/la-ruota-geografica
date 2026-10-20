@@ -190,12 +190,12 @@
           <div class="mode-pill"><i class="fa-solid fa-stopwatch" style="color: var(--accent-gold);"></i> Timer 1 Minuto</div>
         </div>
 
-        <div class="welcome-actions-wrap" style="display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-top: 20px;">
-          <button class="btn-giant btn-primary-glow" onclick="App.startSetupFlow()">
+        <div class="welcome-actions-wrap" style="display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-top: 18px;">
+          <button class="btn-welcome-primary" onclick="App.startSetupFlow()">
             <i class="fa-solid fa-play"></i> Inizia Nuova Partita
           </button>
-          <button class="btn-giant btn-choice" onclick="App.showView('view-regolamento')" style="width: auto; padding: 14px 28px; font-size: 1rem;">
-            <i class="fa-solid fa-scale-balanced"></i> Regolamento
+          <button class="btn-welcome-secondary" onclick="App.openSavedGamesModal()">
+            <i class="fa-solid fa-folder-open"></i> Riprendi Partita
           </button>
         </div>
       </div>
@@ -526,6 +526,33 @@
         </button>
         <button class="btn-primary-glow" onclick="App.resetTurn()" style="width: auto; padding: 10px 24px; font-size: 0.9rem;">
           <i class="fa-solid fa-forward-step"></i> Prossimo Turno
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODALE: RIPRENDI PARTITA / SESSIONI SALVATE (STILE L'ORATORE / HISTORYGRAM) -->
+  <div id="savedGamesModal" class="app-modal-overlay hidden" onclick="if(event.target === this) App.closeSavedGamesModal()">
+    <div class="app-modal-content" style="max-width: 620px;">
+      <span class="close-modal-btn" onclick="App.closeSavedGamesModal()" title="Chiudi">&times;</span>
+      
+      <div style="margin-bottom: 18px;">
+        <span style="font-size: 0.75rem; font-weight: 800; color: var(--accent-geo); text-transform: uppercase; letter-spacing: 0.5px;">
+          <i class="fa-solid fa-folder-open"></i> Sessioni Attive &amp; Salvate
+        </span>
+        <h2 style="font-family: var(--font-heading); color: #0f172a; margin: 4px 0 0 0; font-size: 1.5rem;">Riprendi Partita</h2>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin: 6px 0 0 0;">
+          Seleziona una sessione precedente per riprendere la partita della classe dal punto esatto in cui l'avevi lasciata.
+        </p>
+      </div>
+
+      <div id="savedGamesList" class="saved-games-list" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;">
+        <!-- Popolato dinamicamente da App.renderSavedGamesList() -->
+      </div>
+
+      <div style="display: flex; justify-content: flex-end;">
+        <button class="btn-choice" onclick="App.closeSavedGamesModal()" style="width: auto; padding: 8px 20px; font-size: 0.88rem;">
+          Chiudi
         </button>
       </div>
     </div>
