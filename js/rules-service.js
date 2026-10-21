@@ -343,18 +343,67 @@ In linea con le linee guida pedagogiche di Prof. Memmo, l'attività didattica pr
                 const bodyHtml = hasBullets ? `<ul style="padding-left: 20px; margin: 8px 0;">${formattedContent}</ul>` : formattedContent;
 
                 html += `
-                <div class="rule-card" style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255, 255, 255, 0.1); border-left: 4px solid ${accentColor}; border-radius: 12px; padding: 20px; margin-bottom: 16px; backdrop-filter: blur(8px);">
+                <div class="rule-card" style="background: #ffffff; border: 1px solid #e2e8f0; border-left: 4px solid ${accentColor}; border-radius: 14px; padding: 22px; margin-bottom: 16px; box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);">
                     <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
                         <span style="background: ${accentColor}; color: white; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.9rem; flex-shrink: 0;">${num}</span>
-                        <h3 style="margin: 0; color: #f8fafc; font-size: 1.15rem; font-weight: 700;">${titleText}</h3>
+                        <h3 style="margin: 0; color: #0f172a; font-size: 1.15rem; font-weight: 700;">${titleText}</h3>
                     </div>
-                    <div style="color: #cbd5e1; font-size: 0.95rem;">
+                    <div style="color: #334155; font-size: 0.95rem; line-height: 1.6;">
                         ${bodyHtml}
                     </div>
                 </div>`;
             });
 
             containerEl.innerHTML = html;
+        },
+
+        renderAdminEditor(containerId = 'geo-rules-admin-container') {
+            const container = typeof containerId === 'string' ? document.getElementById(containerId) : containerId;
+            if (!container) return;
+
+            const text = this.getRawText();
+            const userEmail = this._resolveUserEmail();
+            const isAuthAdmin = this.isSuperAdmin(userEmail);
+
+            container.innerHTML = `
+                <div class="glass-card" style="border: 2px solid var(--accent-geo); border-radius: 20px; padding: 28px; background: #ffffff; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05); margin-bottom: 24px;">
+                    <div style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 16px;">
+                        <div>
+                            <h3 style="margin: 0 0 6px 0; font-size: 1.3rem; color: var(--accent-geo); display: flex; align-items: center; gap: 8px;">
+                                <i class="fa-solid fa-crown"></i> Regolamento Ufficiale • Live Editor Cloud
+                            </h3>
+                            <p style="margin: 0; font-size: 0.88rem; color: #475569; line-height: 1.4;">
+                                Modifica il testo del Regolamento in tempo reale. I cambiamenti verranno sincronizzati istantaneamente sul gioco per tutti i docenti e studenti.
+                            </p>
+                        </div>
+                        <div>
+                            ${isAuthAdmin ? `
+                                <span style="font-size: 0.78rem; font-weight: 700; background: rgba(34, 197, 94, 0.15); color: #15803d; border: 1px solid rgba(34, 197, 94, 0.3); padding: 5px 12px; border-radius: 50px; display: inline-flex; align-items: center; gap: 6px;">
+                                    <i class="fa-solid fa-circle-check"></i> Super-Admin Autenticato (${userEmail})
+                                </span>
+                            ` : `
+                                <span style="font-size: 0.78rem; font-weight: 700; background: rgba(217, 119, 6, 0.15); color: #b45309; border: 1px solid rgba(217, 119, 6, 0.3); padding: 5px 12px; border-radius: 50px; display: inline-flex; align-items: center; gap: 6px;">
+                                    <i class="fa-solid fa-cloud-arrow-up"></i> Cloud Sync (${SUPER_ADMIN_EMAIL})
+                                </span>
+                            `}
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <textarea id="geo-rules-textarea" rows="18" style="width: 100%; box-sizing: border-box; background: #f8fafc; border: 1.5px solid var(--border-subtle); border-radius: 12px; color: #0f172a; padding: 16px; font-size: 0.92rem; line-height: 1.6; font-family: monospace; resize: vertical; outline: none; box-shadow: inset 0 2px 4px rgba(0,0,0,0.03);" placeholder="Inserisci i punti del regolamento numerati...">${text}</textarea>
+                    </div>
+
+                    <div style="display: flex; gap: 14px; align-items: center; flex-wrap: wrap;">
+                        <button type="button" id="btn-save-geo-rules" onclick="App.handleSaveAdminRules()" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #ffffff; border: none; padding: 12px 26px; border-radius: 50px; font-weight: 800; font-size: 0.88rem; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3); text-transform: uppercase; letter-spacing: 0.5px;">
+                            <i class="fa-solid fa-floppy-disk"></i> SALVA REGOLAMENTO
+                        </button>
+                        
+                        <button type="button" onclick="App.handleResetAdminRules()" style="background: #f1f5f9; color: #475569; border: 1px solid var(--border-subtle); padding: 10px 20px; border-radius: 50px; font-size: 0.84rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+                            <i class="fa-solid fa-rotate-left"></i> Ripristina Predefinito
+                        </button>
+                    </div>
+                </div>
+            `;
         }
     };
 
