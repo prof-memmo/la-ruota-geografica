@@ -479,18 +479,66 @@
                   </div>
                 </div>
 
-                <!-- 1. Barra Filtri Consultazione Matrice -->
+                <!-- 1. LIVE EDITOR DI SEZIONE A TESTO CONTINUO (MODIFICA IN BLOCCO) -->
+                <div style="background: #f8fafc; border: 2px solid var(--accent-geo); border-radius: 16px; padding: 22px; margin-bottom: 25px; box-shadow: 0 4px 12px rgba(14, 165, 233, 0.06);">
+                  <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 12px;">
+                    <div>
+                      <h4 style="color: #0f172a; margin: 0; font-size: 1.2rem; font-family: var(--font-heading); display: flex; align-items: center; gap: 8px;">
+                        <i class="fa-solid fa-pen-to-square" style="color: var(--accent-geo);"></i> Live Editor di Sezione (Modifica Diretta a Testo Continuo)
+                      </h4>
+                      <p style="color: #64748b; font-size: 0.85rem; margin: 4px 0 0 0;">
+                        Seleziona Percorso e Categoria: il testo sotto si popola con tutte le domande attive. Modifica liberamente in blocco e salva con un click!
+                      </p>
+                    </div>
+                    <span id="geo-section-editor-counter" style="background: rgba(14, 165, 233, 0.12); color: #0284c7; border: 1px solid rgba(14, 165, 233, 0.3); padding: 4px 12px; border-radius: 50px; font-weight: 800; font-size: 0.82rem;">
+                      Caricamento...
+                    </span>
+                  </div>
+
+                  <!-- Selettori Percorso e Categoria dell'Editor -->
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
+                    <div>
+                      <label style="display: block; font-size: 0.8rem; font-weight: 800; color: #475569; margin-bottom: 4px;">Percorso Didattico:</label>
+                      <select id="geo-editor-topic" onchange="window.GeoCardsService.onEditorSectionChange()" style="width: 100%; padding: 10px 14px; border-radius: 10px; border: 1.5px solid var(--border-subtle); background: #ffffff; font-size: 0.9rem; font-weight: 700; color: #0f172a;">
+                        ${topics.map(t => `<option value="${t.id}" ${this._editorCurrentTopic === t.id ? 'selected' : ''}>${t.icon} ${t.title}</option>`).join('')}
+                      </select>
+                    </div>
+                    <div>
+                      <label style="display: block; font-size: 0.8rem; font-weight: 800; color: #475569; margin-bottom: 4px;">Categoria della Ruota:</label>
+                      <select id="geo-editor-category" onchange="window.GeoCardsService.onEditorSectionChange()" style="width: 100%; padding: 10px 14px; border-radius: 10px; border: 1.5px solid var(--border-subtle); background: #ffffff; font-size: 0.9rem; font-weight: 700; color: #0f172a;">
+                        ${categories.map(c => `<option value="${c.id}" ${this._editorCurrentCategory === c.id ? 'selected' : ''}>${c.icon} ${c.name}</option>`).join('')}
+                      </select>
+                    </div>
+                  </div>
+
+                  <!-- Area di Testo Continuo Pre-Popolata -->
+                  <div style="margin-bottom: 14px;">
+                    <textarea id="geo-section-editor-textarea" rows="11" oninput="window.GeoCardsService.updateEditorCounter()" style="width: 100%; padding: 14px; border: 1.5px solid rgba(14, 165, 233, 0.35); border-radius: 12px; font-family: monospace; font-size: 0.88rem; line-height: 1.5; background: #ffffff; color: #0f172a; box-sizing: border-box; resize: vertical;" placeholder="Caricamento domande della sezione..."></textarea>
+                  </div>
+
+                  <!-- Pulsantiera Azioni Rapide Sezione -->
+                  <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                    <button type="button" class="btn-choice" onclick="window.GeoCardsService.resetCurrentSectionDefaults()" style="width: auto; padding: 8px 16px; font-size: 0.85rem; color: #dc2626; border-color: rgba(220, 38, 38, 0.3); display: inline-flex; align-items: center; gap: 6px;">
+                      <i class="fa-solid fa-rotate-left"></i> Ripristina Default Sezione
+                    </button>
+                    <button type="button" id="geo-section-save-btn" class="btn-primary-glow" onclick="window.GeoCardsService.saveSectionFromEditor()" style="width: auto; padding: 10px 24px; font-size: 0.92rem; display: inline-flex; align-items: center; gap: 8px;">
+                      <i class="fa-solid fa-floppy-disk"></i> Salva Tutte le Prove di Questa Sezione in Blocco
+                    </button>
+                  </div>
+                </div>
+
+                <!-- 2. Barra Filtri Consultazione Matrice -->
                 <div style="background: #f8fafc; border: 1px solid var(--border-subtle); border-radius: 12px; padding: 14px; margin-bottom: 20px;">
                   <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
                     <div>
-                      <label style="display: block; font-size: 0.8rem; font-weight: 800; color: #475569; margin-bottom: 4px;">Filtra per Percorso Tematico:</label>
+                      <label style="display: block; font-size: 0.8rem; font-weight: 800; color: #475569; margin-bottom: 4px;">Filtra Tabella per Percorso Tematico:</label>
                       <select id="geo-admin-filter-topic" onchange="window.GeoCardsService.onTopicFilterChange(this.value)" style="width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border-subtle); background: #ffffff; font-size: 0.88rem; font-weight: 700; color: #0f172a;">
                         <option value="all" ${this._currentFilterTopic === 'all' ? 'selected' : ''}>🌍 Tutti i Percorsi (5)</option>
                         ${topics.map(t => `<option value="${t.id}" ${this._currentFilterTopic === t.id ? 'selected' : ''}>${t.icon} ${t.title}</option>`).join('')}
                       </select>
                     </div>
                     <div>
-                      <label style="display: block; font-size: 0.8rem; font-weight: 800; color: #475569; margin-bottom: 4px;">Filtra per Categoria Espressiva:</label>
+                      <label style="display: block; font-size: 0.8rem; font-weight: 800; color: #475569; margin-bottom: 4px;">Filtra Tabella per Categoria Espressiva:</label>
                       <select id="geo-admin-filter-category" onchange="window.GeoCardsService.onCategoryFilterChange(this.value)" style="width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border-subtle); background: #ffffff; font-size: 0.88rem; font-weight: 700; color: #0f172a;">
                         <option value="all" ${this._currentFilterCategory === 'all' ? 'selected' : ''}>🎡 Tutte le Categorie (8)</option>
                         ${categories.map(c => `<option value="${c.id}" ${this._currentFilterCategory === c.id ? 'selected' : ''}>${c.icon} ${c.name}</option>`).join('')}
@@ -499,14 +547,14 @@
                   </div>
                 </div>
 
-                <!-- 2. Elenco Prove Filtrate -->
+                <!-- 3. Elenco Prove Filtrate -->
                 <div style="margin-bottom: 30px;">
                   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                     <span style="font-size: 0.85rem; font-weight: 800; color: #64748b;">
-                      Visualizzazione: <strong>${displayedCards.length}</strong> prove corrispondenti ai filtri
+                      Visualizzazione Rapida: <strong>${displayedCards.length}</strong> prove corrispondenti ai filtri
                     </span>
                   </div>
-                  <div style="max-height: 400px; overflow-y: auto; border: 1px solid var(--border-subtle); border-radius: 12px; background: #ffffff;">
+                  <div style="max-height: 340px; overflow-y: auto; border: 1px solid var(--border-subtle); border-radius: 12px; background: #ffffff;">
                     ${displayedCards.length === 0 ? `
                       <div style="text-align: center; padding: 40px 20px; color: #94a3b8;">
                         <i class="fa-solid fa-inbox" style="font-size: 2.5rem; margin-bottom: 10px; opacity: 0.5;"></i>
@@ -556,13 +604,13 @@
                   </div>
                 </div>
 
-                <!-- 3. CARICAMENTO MASSIVO DA TESTO WORD / SEZIONI (BULK IMPORTER) -->
-                <div style="background: #f8fafc; border: 2px solid var(--accent-geo); border-radius: 16px; padding: 22px;">
+                <!-- 4. CARICAMENTO MASSIVO MULTI-SEZIONE DA TESTO WORD / APPUNTI -->
+                <div style="background: #ffffff; border: 1.5px solid var(--border-subtle); border-radius: 16px; padding: 22px;">
                   <h4 style="color: #0f172a; margin: 0 0 6px 0; font-size: 1.15rem; font-family: var(--font-heading); display: flex; align-items: center; gap: 8px;">
-                    <i class="fa-solid fa-file-import" style="color: var(--accent-geo);"></i> Caricamento Massivo da Testo Word (Smistamento per Sezioni)
+                    <i class="fa-solid fa-file-import" style="color: var(--accent-geo);"></i> Importatore Massivo Multi-Sezione (da Testo Word o Appunti)
                   </h4>
                   <p style="color: #64748b; font-size: 0.85rem; margin-bottom: 16px; line-height: 1.5;">
-                    Incolla direttamente il testo dal tuo documento Word. Puoi incollare un elenco di domande specificando il Percorso e la Categoria predefiniti, oppure dividere il testo con intestazioni di sezione tipo: <code style="background:#e2e8f0; padding:2px 6px; border-radius:4px; font-size:0.8rem;">[PERCORSO: climatologia]</code> e <code style="background:#e2e8f0; padding:2px 6px; border-radius:4px; font-size:0.8rem;">[CATEGORIA: quiz]</code>.
+                    Per caricare contemporaneamente più sezioni diverse, incolla un testo lungo contenente intestazioni del tipo <code style="background:#e2e8f0; padding:2px 6px; border-radius:4px; font-size:0.8rem;">[PERCORSO: climatologia]</code> e <code style="background:#e2e8f0; padding:2px 6px; border-radius:4px; font-size:0.8rem;">[CATEGORIA: quiz]</code>.
                   </p>
 
                   <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-bottom: 14px;">
@@ -589,7 +637,7 @@
 
                   <div style="margin-bottom: 14px;">
                     <label style="display: block; font-size: 0.8rem; font-weight: 800; color: #475569; margin-bottom: 4px;">Testo da Word (Incolla qui):</label>
-                    <textarea id="geo-bulk-textarea" rows="8" style="width: 100%; padding: 12px; border: 1px solid var(--border-subtle); border-radius: 10px; font-family: monospace; font-size: 0.88rem; line-height: 1.4; box-sizing: border-box;" placeholder="Esempio 1 (elenco semplice):&#10;1. Quali sono i tre fattori del clima?&#10;2. Perché in montagna fa più freddo?&#10;&#10;Esempio 2 (con sezioni):&#10;[PERCORSO: demografia]&#10;[CATEGORIA: quiz]&#10;1. Che cos'è la densità di popolazione?&#10;2. Qual è il continente più popoloso?&#10;&#10;[CATEGORIA: reel]&#10;1. Spiega in 60 secondi la differenza tra emigrato e immigrato!"></textarea>
+                    <textarea id="geo-bulk-textarea" rows="7" style="width: 100%; padding: 12px; border: 1px solid var(--border-subtle); border-radius: 10px; font-family: monospace; font-size: 0.88rem; line-height: 1.4; box-sizing: border-box;" placeholder="Esempio (con sezioni):&#10;[PERCORSO: demografia]&#10;[CATEGORIA: quiz]&#10;1. Che cos'è la densità di popolazione?&#10;2. Qual è il continente più popoloso?&#10;&#10;[CATEGORIA: reel]&#10;1. Fai un Reel: spiega in 60 secondi la mobilità umana!"></textarea>
                   </div>
 
                   <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
@@ -606,6 +654,128 @@
                 </div>
               </div>
             `;
+
+            // Inizializza automaticamente la textarea del Live Editor di Sezione
+            this.loadSectionIntoEditor();
+        },
+
+        // ==============================================================
+        // METODI DEL LIVE EDITOR DI SEZIONE (TESTO CONTINUO)
+        // ==============================================================
+        _editorCurrentTopic: 'astronomia',
+        _editorCurrentCategory: 'reel',
+
+        onEditorSectionChange() {
+            const topicSel = document.getElementById('geo-editor-topic');
+            const catSel = document.getElementById('geo-editor-category');
+            if (topicSel) this._editorCurrentTopic = topicSel.value;
+            if (catSel) this._editorCurrentCategory = catSel.value;
+            this.loadSectionIntoEditor();
+        },
+
+        loadSectionIntoEditor() {
+            const textarea = document.getElementById('geo-section-editor-textarea');
+            const counter = document.getElementById('geo-section-editor-counter');
+            if (!textarea) return;
+
+            const cards = this.getCards(this._editorCurrentTopic, this._editorCurrentCategory);
+            // Formattazione riga per riga numerata
+            const lines = cards.map((text, i) => `${i + 1}. ${text}`);
+            textarea.value = lines.join('\n');
+
+            if (counter) {
+                counter.textContent = `📝 ${cards.length} prove caricate per questa sezione`;
+            }
+        },
+
+        updateEditorCounter() {
+            const textarea = document.getElementById('geo-section-editor-textarea');
+            const counter = document.getElementById('geo-section-editor-counter');
+            if (!textarea || !counter) return;
+
+            const rawText = textarea.value;
+            const lines = rawText.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 2);
+            counter.textContent = `📝 ${lines.length} prove pronte nel testo`;
+        },
+
+        async saveSectionFromEditor() {
+            const textarea = document.getElementById('geo-section-editor-textarea');
+            const saveBtn = document.getElementById('geo-section-save-btn');
+            const topicId = this._editorCurrentTopic;
+            const catId = this._editorCurrentCategory;
+
+            if (!textarea) return;
+
+            const rawText = textarea.value.trim();
+            if (!rawText) {
+                alert("⚠️ Il testo della sezione non può essere completamente vuoto.");
+                return;
+            }
+
+            // Estrazione pulita delle righe (rimuovendo numerazioni tipo "1.", "1)", "•", "-")
+            const lines = rawText.split(/\r?\n/).map(line => {
+                const trimmed = line.trim();
+                return trimmed.replace(/^(\d+[\.\)\:\-]\s*|[\•\-\*]\s*)/, '').trim();
+            }).filter(t => t.length > 2);
+
+            if (lines.length === 0) {
+                alert("⚠️ Nessuna prova didattica valida rilevata nel testo.");
+                return;
+            }
+
+            try {
+                if (saveBtn) {
+                    saveBtn.disabled = true;
+                    saveBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Salvataggio Sezione in corso...';
+                }
+
+                // Sostituzione atomica dell'array per questa combinazione
+                if (!this._cardsByTopic[topicId]) this._cardsByTopic[topicId] = {};
+                this._cardsByTopic[topicId][catId] = lines;
+
+                await this._persistDataset();
+                this._notifyListeners();
+
+                alert(`✅ Salvate con successo ${lines.length} prove per la sezione [${topicId.toUpperCase()} • ${catId.toUpperCase()}]!`);
+                this.renderAdminUI('geo-cards-admin-container');
+            } catch (err) {
+                alert("❌ Errore durante il salvataggio della sezione: " + err.message);
+            } finally {
+                if (saveBtn) {
+                    saveBtn.disabled = false;
+                    saveBtn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Salva Tutte le Prove di Questa Sezione in Blocco';
+                }
+            }
+        },
+
+        async resetCurrentSectionDefaults() {
+            const topicId = this._editorCurrentTopic;
+            const catId = this._editorCurrentCategory;
+            const confirmMsg = `Vuoi ripristinare il set predefinito di fabbrica per la sezione [${topicId.toUpperCase()} • ${catId.toUpperCase()}]?`;
+
+            if (confirm(confirmMsg)) {
+                try {
+                    const defaults = this.getDefaultDataset();
+                    const defaultList = (defaults[topicId] && Array.isArray(defaults[topicId][catId])) ? defaults[topicId][catId] : [];
+
+                    if (defaultList.length === 0) {
+                        alert("⚠️ Nessun default trovato per questa sezione.");
+                        return;
+                    }
+
+                    if (!this._cardsByTopic[topicId]) this._cardsByTopic[topicId] = {};
+                    this._cardsByTopic[topicId][catId] = JSON.parse(JSON.stringify(defaultList));
+
+                    await this._persistDataset();
+                    this._notifyListeners();
+
+                    this.loadSectionIntoEditor();
+                    this.renderAdminUI('geo-cards-admin-container');
+                    alert(`✅ Sezione [${topicId.toUpperCase()} • ${catId.toUpperCase()}] ripristinata ai default (${defaultList.length} prove).`);
+                } catch (e) {
+                    alert("❌ Errore durante il ripristino della sezione: " + e.message);
+                }
+            }
         },
 
         onTopicFilterChange(val) {
