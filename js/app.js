@@ -71,8 +71,6 @@ const App = {
         if (manualModal) manualModal.classList.add('hidden');
         const legalModal = document.getElementById('legal-modal');
         if (legalModal) legalModal.classList.add('hidden');
-        const cardModal = document.getElementById('geo-card-edit-modal');
-        if (cardModal) cardModal.classList.add('hidden');
         document.body.style.overflow = '';
       }
     });

@@ -665,53 +665,6 @@
     </div>
   </div>
 
-  <!-- MODALE: MODIFICA / AGGIUNTA SINGOLA PROVA (SUPER-ADMIN) -->
-  <div id="geo-card-edit-modal" class="app-modal-overlay hidden" onclick="if(event.target === this) { this.classList.add('hidden'); document.body.style.overflow = ''; }">
-    <div class="app-modal-content" style="max-width: 620px;">
-      <span class="close-modal-btn" onclick="document.getElementById('geo-card-edit-modal').classList.add('hidden'); document.body.style.overflow = '';">&times;</span>
-      <h3 style="font-family: var(--font-heading); color: #0f172a; margin-bottom: 6px;" id="geo-card-modal-title">Modifica Prova Didattica</h3>
-      <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 16px;" id="geo-card-modal-subtitle">
-        Modifica il testo della consegna che apparirà quando la ruota si ferma su questa combinazione.
-      </p>
-      <input type="hidden" id="geo-card-modal-index" value="-1">
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px;">
-        <div>
-          <label style="display: block; font-size: 0.8rem; font-weight: 800; color: #475569; margin-bottom: 4px;">Percorso Tematico:</label>
-          <select id="geo-card-modal-topic" style="width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border-subtle); background: #f8fafc; font-size: 0.88rem; font-weight: 600;">
-            <option value="astronomia">🌌 Geografia Astronomica</option>
-            <option value="climatologia">⛅ Climatologia</option>
-            <option value="demografia">👥 Demografia</option>
-            <option value="economia">🏭 Geografia Economica</option>
-            <option value="globalizzazione">🕊️ La Globalizzazione</option>
-          </select>
-        </div>
-        <div>
-          <label style="display: block; font-size: 0.8rem; font-weight: 800; color: #475569; margin-bottom: 4px;">Categoria della Ruota:</label>
-          <select id="geo-card-modal-cat" style="width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border-subtle); background: #f8fafc; font-size: 0.88rem; font-weight: 600;">
-            <option value="reel">🎥 REEL</option>
-            <option value="quiz">🧠 QUIZ</option>
-            <option value="mimo">💃 MIMO</option>
-            <option value="meme">😂 MEME</option>
-            <option value="podcast">🎙 PODCAST</option>
-            <option value="creativita">🎨 CREATIVITÀ</option>
-            <option value="disegno">⚡ DISEGNO</option>
-            <option value="scoperta">🔍 SCOPERTA</option>
-          </select>
-        </div>
-      </div>
-      <div style="margin-bottom: 18px;">
-        <label style="display: block; font-size: 0.8rem; font-weight: 800; color: #475569; margin-bottom: 4px;">Testo della Domanda / Prova:</label>
-        <textarea id="geo-card-modal-text" rows="4" style="width: 100%; padding: 12px; border: 1px solid var(--border-subtle); border-radius: 10px; font-size: 0.95rem; line-height: 1.4; resize: vertical; box-sizing: border-box;"></textarea>
-      </div>
-      <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px;">
-        <button type="button" class="btn-choice" onclick="document.getElementById('geo-card-edit-modal').classList.add('hidden'); document.body.style.overflow = '';" style="width: auto; padding: 8px 18px; font-size: 0.85rem;">Annulla</button>
-        <button type="button" id="geo-card-modal-save-btn" class="btn-primary-glow" onclick="window.GeoCardsService.saveModalCard()" style="width: auto; padding: 10px 24px; font-size: 0.9rem;">
-          <i class="fa-solid fa-floppy-disk"></i> Salva Prova
-        </button>
-      </div>
-    </div>
-  </div>
-
   <!-- Scripts dell'Applicazione -->
   <script src="js/music.js?v=20261021_v3"></script>
   <script src="js/cards-data.js?v=20261021_v3"></script>
