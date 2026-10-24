@@ -79,7 +79,39 @@ const App = {
     this.showView('view-welcome');
   },
 
-  showView(viewId) {
+  /* -------------------------------------------------------------
+   * Verifica Accesso Hub Guard
+   * ------------------------------------------------------------- */
+  async verifyEcosystemAccess(isPublicView = false) {
+    if (!window.HubSubscriptionGuard || typeof window.HubSubscriptionGuard.verifyAccess !== 'function') {
+      return true;
+    }
+    const currentUser = this.currentUser || (typeof firebase !== 'undefined' && firebase.auth && firebase.auth().currentUser) || null;
+    let currentRole = 'guest';
+    if (currentUser) {
+      currentRole = this.isSuperAdminUser() ? 'admin' : 'docente';
+    } else {
+      const ssoRole = (localStorage.getItem('hub_user_role') || '').toLowerCase();
+      if (ssoRole === 'docente' || ssoRole === 'admin') currentRole = ssoRole;
+      else if (ssoRole === 'studente') currentRole = 'studente';
+      else currentRole = 'guest';
+    }
+    return await window.HubSubscriptionGuard.verifyAccess({
+      user: currentUser,
+      role: currentRole,
+      isPublicView: isPublicView
+    });
+  },
+
+  async showView(viewId) {
+    const isPublic = ['view-welcome', 'view-regolamento'].includes(viewId);
+    if (!isPublic) {
+      const isAllowed = await this.verifyEcosystemAccess(false);
+      if (!isAllowed) {
+        return;
+      }
+    }
+
     this.activeView = viewId;
     document.querySelectorAll('.app-view').forEach(view => {
       view.classList.add('hidden');
@@ -130,11 +162,15 @@ const App = {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   },
 
-  startSetupFlow() {
+  async startSetupFlow() {
+    const isAllowed = await this.verifyEcosystemAccess(false);
+    if (!isAllowed) return;
     this.showView('view-setup-topic');
   },
 
-  selectTopic(topicId) {
+  async selectTopic(topicId) {
+    const isAllowed = await this.verifyEcosystemAccess(false);
+    if (!isAllowed) return;
     this.currentTopic = topicId;
     const topicData = (window.THEMATIC_TOPICS || []).find(t => t.id === topicId) || {
       title: 'Geografia Generale',
@@ -490,7 +526,9 @@ const App = {
     return session;
   },
 
-  openSavedGamesModal() {
+  async openSavedGamesModal() {
+    const isAllowed = await this.verifyEcosystemAccess(false);
+    if (!isAllowed) return;
     this.renderSavedGamesList();
     const modal = document.getElementById('savedGamesModal');
     if (modal) {
