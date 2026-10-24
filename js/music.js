@@ -11,21 +11,15 @@ const AudioEngine = {
   audioEl: null,
 
   tracks: [
-    { title: "Aventure - Close Friends", src: "https://prof-memmo.github.io/l-oratore/assets/audio/Aventure%20-%20Close%20Friends%20(freetouse.com).mp3" },
-    { title: "Burgundy - Chances", src: "https://prof-memmo.github.io/l-oratore/assets/audio/Burgundy%20-%20Chances%20(freetouse.com).mp3" },
-    { title: "Epic Spectrum - Forgiveness", src: "https://prof-memmo.github.io/l-oratore/assets/audio/Epic%20Spectrum%20-%20Forgiveness%20(freetouse.com).mp3" },
-    { title: "Hazelwood - At Ease", src: "https://prof-memmo.github.io/l-oratore/assets/audio/Hazelwood%20-%20At%20Ease%20(freetouse.com).mp3" },
-    { title: "Hazelwood - Coming Of Age", src: "https://prof-memmo.github.io/l-oratore/assets/audio/Hazelwood%20-%20Coming%20Of%20Age%20(freetouse.com).mp3" },
-    { title: "Johny Grimes - Senseless", src: "https://prof-memmo.github.io/l-oratore/assets/audio/Johny%20Grimes%20-%20Senseless%20(freetouse.com).mp3" },
-    { title: "Nebulite - A New Day", src: "https://prof-memmo.github.io/l-oratore/assets/audio/Nebulite%20-%20A%20New%20Day%20(freetouse.com).mp3" },
-    { title: "Nebulite - Kyoto", src: "https://prof-memmo.github.io/l-oratore/assets/audio/Nebulite%20-%20Kyoto%20(freetouse.com).mp3" },
-    { title: "Nebulite - Mountain", src: "https://prof-memmo.github.io/l-oratore/assets/audio/Nebulite%20-%20Mountain%20(freetouse.com).mp3" },
-    { title: "Piki - 9am, meeeh", src: "https://prof-memmo.github.io/l-oratore/assets/audio/Piki%20-%209am,%20meeeh%20(freetouse.com).mp3" },
-    { title: "Pufino - Soaked", src: "https://prof-memmo.github.io/l-oratore/assets/audio/Pufino%20-%20Soaked%20(freetouse.com).mp3" },
-    { title: "Waesto - Morning", src: "https://prof-memmo.github.io/l-oratore/assets/audio/Waesto%20-%20Morning%20(freetouse.com).mp3" },
-    { title: "Zambolino - Smooth Place", src: "https://prof-memmo.github.io/l-oratore/assets/audio/Zambolino%20-%20Smooth%20Place%20(freetouse.com).mp3" },
-    { title: "massobeats - peach prosecco", src: "https://prof-memmo.github.io/l-oratore/assets/audio/massobeats%20-%20peach%20prosecco%20(freetouse.com).mp3" },
-    { title: "tubebackr & Filo - Morning Sun", src: "https://prof-memmo.github.io/l-oratore/assets/audio/tubebackr%20&%20Filo%20Starquez%20-%20Morning%20Sun%20(freetouse.com).mp3" }
+    { title: "Aetheric - Graveyard Waltz", src: "musica/Aetheric%20-%20Graveyard%20Waltz%20(freetouse.com).mp3" },
+    { title: "Aetheric - Haunted House", src: "musica/Aetheric%20-%20Haunted%20House%20(freetouse.com).mp3" },
+    { title: "Aetheric - New Age Mystery", src: "musica/Aetheric%20-%20New%20Age%20Mystery%20(freetouse.com).mp3" },
+    { title: "Aetheric - Spooky Dance", src: "musica/Aetheric%20-%20Spooky%20Dance%20(freetouse.com).mp3" },
+    { title: "Aetheric - Trick or Treat", src: "musica/Aetheric%20-%20Trick%20or%20Treat%20(freetouse.com).mp3" },
+    { title: "Pufino - ESTD", src: "musica/Pufino%20-%20ESTD%20(freetouse.com).mp3" },
+    { title: "Zambolino - Sneaky Spider", src: "musica/Zambolino%20-%20Sneaky%20Spider%20(freetouse.com).mp3" },
+    { title: "Zolvi - Creepy Crawl Cuties", src: "musica/Zolvi%20-%20Creepy%20Crawl%20Cuties%20(freetouse.com).mp3" },
+    { title: "Zolvi - Spooky Giggles", src: "musica/Zolvi%20-%20Spooky%20Giggles%20(freetouse.com).mp3" }
   ],
 
   init() {
@@ -40,6 +34,7 @@ const AudioEngine = {
 
     this.audioEl = new Audio();
     this.audioEl.loop = false;
+    this.audioEl.volume = 0.3;
     this.audioEl.addEventListener('ended', () => this.nextTrack());
     this.updateUI();
   },
@@ -104,7 +99,7 @@ const AudioEngine = {
   playMusic() {
     if (!this.audioEl) return;
     const track = this.tracks[this.currentTrackIndex];
-    if (this.audioEl.src !== track.src) {
+    if (!this.audioEl.src || (!this.audioEl.src.endsWith(track.src) && !this.audioEl.src.includes(track.src))) {
       this.audioEl.src = track.src;
     }
     this.audioEl.play().then(() => {
@@ -124,6 +119,9 @@ const AudioEngine = {
 
   nextTrack() {
     this.currentTrackIndex = (this.currentTrackIndex + 1) % this.tracks.length;
+    if (this.audioEl) {
+      this.audioEl.src = this.tracks[this.currentTrackIndex].src;
+    }
     if (this.isPlayingMusic) {
       this.playMusic();
     } else {
@@ -133,6 +131,9 @@ const AudioEngine = {
 
   prevTrack() {
     this.currentTrackIndex = (this.currentTrackIndex - 1 + this.tracks.length) % this.tracks.length;
+    if (this.audioEl) {
+      this.audioEl.src = this.tracks[this.currentTrackIndex].src;
+    }
     if (this.isPlayingMusic) {
       this.playMusic();
     } else {
