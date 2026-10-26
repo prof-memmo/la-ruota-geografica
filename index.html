@@ -143,7 +143,7 @@
               <a href="https://freetouse.com/music" target="_blank" class="music-link">FREETOUSE.COM/MUSIC</a>
             </div>
             <div class="music-capsule">
-              <span class="music-track-title" id="music-track-title">Aventure - Close Friends</span>
+              <span class="music-track-title" id="music-track-title">Aetheric - Graveyard Waltz</span>
               <div class="music-btns">
                 <button class="music-btn-icon" onclick="AudioEngine.prevTrack()" title="Precedente"><i class="fa-solid fa-backward-step"></i></button>
                 <button class="music-play-btn" id="music-play-btn" onclick="AudioEngine.togglePlay()" title="Play/Pausa"><i class="fa-solid fa-play"></i></button>
@@ -318,9 +318,6 @@
             <button class="btn-primary-glow" id="btn-spin-mode" onclick="App.handleSpinModeClick()">
               🎡 GIRA RUOTA MODALITÀ
             </button>
-            <button class="btn-choice" id="btn-free-mode" onclick="App.startWithFreeMode()" style="padding: 10px; font-size: 0.88rem; flex-direction: row; gap: 6px; justify-content: center;">
-              <span>▶️</span> Gioca in Modalità FREE
-            </button>
           </div>
         </div>
 
@@ -337,9 +334,6 @@
           <div class="wheel-controls-box" style="margin-top: 18px; display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 380px;">
             <button class="btn-primary-glow" id="btn-spin-cat" onclick="App.handleSpinCategoryClick()">
               🎯 GIRA RUOTA CATEGORIE
-            </button>
-            <button class="btn-choice" onclick="App.resetTurn()" style="padding: 10px; font-size: 0.88rem; flex-direction: row; gap: 6px; justify-content: center;">
-              <i class="fa-solid fa-rotate-left"></i> Resetta Turno
             </button>
           </div>
         </div>
@@ -454,6 +448,9 @@
         <button type="button" class="admin-tab-btn" id="btn-tab-geo-miniguida" onclick="App.switchAdminTab('miniguida')" style="padding: 10px 20px; border-radius: 12px; font-weight: 700; font-size: 0.9rem; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; border: 1.5px solid transparent; background: #f1f5f9; color: #475569; transition: all 0.2s;">
           <i class="fa-solid fa-circle-question"></i> Miniguida
         </button>
+        <button type="button" class="admin-tab-btn" id="btn-tab-geo-cards" onclick="App.switchAdminTab('cards')" style="padding: 10px 20px; border-radius: 12px; font-weight: 700; font-size: 0.9rem; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; border: 1.5px solid transparent; background: #f1f5f9; color: #475569; transition: all 0.2s;">
+          <i class="fa-solid fa-layer-group"></i> Domande & Prove
+        </button>
       </div>
 
       <div id="geo-rules-tab-content">
@@ -465,6 +462,12 @@
       <div id="geo-miniguida-tab-content" style="display: none;">
         <div id="geo-miniguida-admin-container" style="max-width: 900px; margin: 0 auto; width: 100%;">
           <!-- Popolato dinamicamente da GeoMiniguidaService.renderAdminEditor('geo-miniguida-admin-container') -->
+        </div>
+      </div>
+
+      <div id="geo-cards-tab-content" style="display: none;">
+        <div id="geo-cards-admin-container" style="max-width: 1000px; margin: 0 auto; width: 100%;">
+          <!-- Popolato dinamicamente da GeoCardsService.renderAdminUI('geo-cards-admin-container') -->
         </div>
       </div>
     </section>
@@ -663,11 +666,12 @@
   </div>
 
   <!-- Scripts dell'Applicazione -->
-  <script src="js/music.js?v=20261018_dual_wheel"></script>
-  <script src="js/cards-data.js?v=20261018_dual_wheel"></script>
-  <script src="js/wheel-engine.js?v=20261018_dual_wheel"></script>
-  <script src="js/rules-service.js?v=20261018_dual_wheel"></script>
-  <script src="js/miniguida-service.js?v=20261018_dual_wheel"></script>
-  <script src="js/app.js?v=20261018_dual_wheel"></script>
+  <script src="js/music.js?v=20261024_musica"></script>
+  <script src="js/cards-data.js?v=20261021_v3"></script>
+  <script src="js/cards-service.js?v=20261021_v4"></script>
+  <script src="js/wheel-engine.js?v=20261021_v3"></script>
+  <script src="js/rules-service.js?v=20261021_v3"></script>
+  <script src="js/miniguida-service.js?v=20261021_v3"></script>
+  <script src="js/app.js?v=20261024_guard"></script>
 </body>
 </html>

@@ -76,10 +76,11 @@ class SingleWheel {
       this.ctx.arc(0, 0, radius, startAngle, endAngle);
       this.ctx.closePath();
 
-      // Colore alternato per massima visibilità alla LIM
-      this.ctx.fillStyle = i % 2 === 0 ? '#ffffff' : '#f8fafc';
+      // Colore vivace identificativo del segmento con contrasto ottimale
+      const sliceColor = item.color || (i % 2 === 0 ? '#1e293b' : '#334155');
+      this.ctx.fillStyle = sliceColor;
       this.ctx.fill();
-      this.ctx.lineWidth = 3;
+      this.ctx.lineWidth = 2.5;
       this.ctx.strokeStyle = '#0f172a';
       this.ctx.stroke();
 
@@ -87,24 +88,89 @@ class SingleWheel {
       this.ctx.save();
       const textAngle = startAngle + segmentAngle / 2;
       this.ctx.rotate(textAngle);
-      this.ctx.textAlign = 'right';
       this.ctx.textBaseline = 'middle';
 
-      // Etichetta del segmento
-      this.ctx.fillStyle = '#090d16';
-      this.ctx.font = '800 12.5px "Julius Sans One", sans-serif';
-      this.ctx.fillText(item.name, radius - 28, 0);
+      // Determina contrasto testo ottimale (chiaro o scuro in base alla luminosità)
+      const isLightSlice = (() => {
+        let hex = (sliceColor || '').replace('#', '');
+        if (hex.length === 3) hex = hex.split('').map(c => c + c).join('');
+        const r = parseInt(hex.substring(0, 2), 16) || 0;
+        const g = parseInt(hex.substring(2, 4), 16) || 0;
+        const b = parseInt(hex.substring(4, 6), 16) || 0;
+        return ((r * 299) + (g * 587) + (b * 114)) / 1000 >= 165;
+      })();
 
-      // Icona / Emoji
-      this.ctx.font = '20px "Apple Color Emoji", "Segoe UI Emoji", sans-serif';
-      this.ctx.fillText(item.icon, radius - 6, 0);
+      const textColor = isLightSlice ? '#090d16' : '#ffffff';
+      const shadowColor = isLightSlice ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.75)';
+
+      const fontFamily = 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif';
+
+      // Emoji sull'anello esterno (ben distanziata dal bordo esterno)
+      const emojiSize = Math.max(16, Math.min(22, Math.floor(radius * 0.14)));
+      this.ctx.font = `${emojiSize}px "Apple Color Emoji", "Segoe UI Emoji", sans-serif`;
+      this.ctx.textAlign = 'center';
+      this.ctx.shadowColor = 'transparent';
+      this.ctx.shadowBlur = 0;
+      this.ctx.fillText(item.icon, radius - 15, 0);
+
+      // Mozzo compatto
+      const mozzoRadius = Math.max(22, Math.min(26, Math.floor(radius * 0.16)));
+      
+      // Slot radiale utile: tra mozzo (+8px) e icona (-14px)
+      const minTextX = mozzoRadius + 8;
+      const maxTextX = radius - 28;
+      const availableTextWidth = maxTextX - minTextX;
+      const textCenterX = (minTextX + maxTextX) / 2;
+
+      // Gestione intelligente 1 o 2 righe per parole composte
+      let lines = [item.name];
+      if (item.name.includes('-')) {
+        lines = item.name.split('-');
+      } else if (item.name.includes(' ')) {
+        const parts = item.name.split(' ');
+        if (parts.length === 3) {
+          lines = [parts[0], parts[1] + ' ' + parts[2]];
+        } else if (parts.length === 2) {
+          lines = parts;
+        }
+      }
+
+      // Font size ottimizzato: grande e nitido
+      let fontSize = lines.length > 1 ? 11.5 : Math.max(11, Math.min(13.5, Math.floor(radius * 0.088)));
+      this.ctx.font = `bold ${fontSize}px "Inter", sans-serif`;
+      this.ctx.textAlign = 'center';
+
+      // Verifica larghezza riga più lunga
+      let maxLineWidth = 0;
+      for (const line of lines) {
+        const w = this.ctx.measureText(line).width;
+        if (w > maxLineWidth) maxLineWidth = w;
+      }
+
+      if (maxLineWidth > availableTextWidth) {
+        fontSize = Math.max(8.5, Math.floor(fontSize * (availableTextWidth / maxLineWidth)));
+        this.ctx.font = `bold ${fontSize}px "Inter", sans-serif`;
+      }
+
+      this.ctx.fillStyle = textColor;
+      this.ctx.shadowColor = shadowColor;
+      this.ctx.shadowBlur = 3.5;
+
+      if (lines.length === 1) {
+        this.ctx.fillText(lines[0], textCenterX, 0);
+      } else {
+        const lineHeight = fontSize * 1.25;
+        this.ctx.fillText(lines[0], textCenterX, -lineHeight * 0.48);
+        this.ctx.fillText(lines[1], textCenterX, lineHeight * 0.52);
+      }
 
       this.ctx.restore();
     }
 
-    // Cerchio centrale (mozzo)
+    // Cerchio centrale (mozzo compatto e proporzionato)
+    const mozzoRadius = Math.max(22, Math.min(26, Math.floor(radius * 0.16)));
     this.ctx.beginPath();
-    this.ctx.arc(0, 0, 34, 0, 2 * Math.PI);
+    this.ctx.arc(0, 0, mozzoRadius, 0, 2 * Math.PI);
     this.ctx.fillStyle = '#0f172a';
     this.ctx.fill();
     this.ctx.lineWidth = 3.5;
@@ -112,9 +178,11 @@ class SingleWheel {
     this.ctx.stroke();
 
     this.ctx.fillStyle = '#ffffff';
-    this.ctx.font = '800 10.5px "Julius Sans One", sans-serif';
+    this.ctx.font = `800 ${Math.max(9, Math.floor(mozzoRadius * 0.4))}px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif`;
     this.ctx.textAlign = 'center';
     this.ctx.textBaseline = 'middle';
+    this.ctx.shadowColor = 'transparent';
+    this.ctx.shadowBlur = 0;
     this.ctx.fillText(this.centerLabel, 0, 0);
 
     this.ctx.restore();

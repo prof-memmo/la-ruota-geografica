@@ -31,6 +31,9 @@ const App = {
         window.RulesService.renderToContainer(rulesContainer, { accentColor: '#0ea5e9' });
       }
     }
+    if (window.GeoCardsService) {
+      window.GeoCardsService.init();
+    }
 
     // 2. Setup SSO & Header
     this.setupHeaderProfile();
@@ -76,7 +79,39 @@ const App = {
     this.showView('view-welcome');
   },
 
-  showView(viewId) {
+  /* -------------------------------------------------------------
+   * Verifica Accesso Hub Guard
+   * ------------------------------------------------------------- */
+  async verifyEcosystemAccess(isPublicView = false) {
+    if (!window.HubSubscriptionGuard || typeof window.HubSubscriptionGuard.verifyAccess !== 'function') {
+      return true;
+    }
+    const currentUser = this.currentUser || (typeof firebase !== 'undefined' && firebase.auth && firebase.auth().currentUser) || null;
+    let currentRole = 'guest';
+    if (currentUser) {
+      currentRole = this.isSuperAdminUser() ? 'admin' : 'docente';
+    } else {
+      const ssoRole = (localStorage.getItem('hub_user_role') || '').toLowerCase();
+      if (ssoRole === 'docente' || ssoRole === 'admin') currentRole = ssoRole;
+      else if (ssoRole === 'studente') currentRole = 'studente';
+      else currentRole = 'guest';
+    }
+    return await window.HubSubscriptionGuard.verifyAccess({
+      user: currentUser,
+      role: currentRole,
+      isPublicView: isPublicView
+    });
+  },
+
+  async showView(viewId) {
+    const isPublic = ['view-welcome', 'view-regolamento'].includes(viewId);
+    if (!isPublic) {
+      const isAllowed = await this.verifyEcosystemAccess(false);
+      if (!isAllowed) {
+        return;
+      }
+    }
+
     this.activeView = viewId;
     document.querySelectorAll('.app-view').forEach(view => {
       view.classList.add('hidden');
@@ -127,11 +162,15 @@ const App = {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   },
 
-  startSetupFlow() {
+  async startSetupFlow() {
+    const isAllowed = await this.verifyEcosystemAccess(false);
+    if (!isAllowed) return;
     this.showView('view-setup-topic');
   },
 
-  selectTopic(topicId) {
+  async selectTopic(topicId) {
+    const isAllowed = await this.verifyEcosystemAccess(false);
+    if (!isAllowed) return;
     this.currentTopic = topicId;
     const topicData = (window.THEMATIC_TOPICS || []).find(t => t.id === topicId) || {
       title: 'Geografia Generale',
@@ -255,11 +294,16 @@ const App = {
 
   extractAndShowChallenge(category) {
     const topicKey = this.currentTopic || 'astronomia';
-    const topicPool = (window.CARDS_BY_TOPIC && window.CARDS_BY_TOPIC[topicKey]) ? window.CARDS_BY_TOPIC[topicKey] : (window.CARDS_DATA || {});
-    const pool = topicPool[category.id] || (window.CARDS_DATA && window.CARDS_DATA[category.id]) || [];
+    let pool = [];
+    if (window.GeoCardsService && typeof window.GeoCardsService.getCards === 'function') {
+      pool = window.GeoCardsService.getCards(topicKey, category.id);
+    } else {
+      const topicPool = (window.CARDS_BY_TOPIC && window.CARDS_BY_TOPIC[topicKey]) ? window.CARDS_BY_TOPIC[topicKey] : (window.CARDS_DATA || {});
+      pool = topicPool[category.id] || (window.CARDS_DATA && window.CARDS_DATA[category.id]) || [];
+    }
 
-    const randomIndex = Math.floor(Math.random() * pool.length);
-    const challengeText = pool[randomIndex] || "Spiega l'argomento assegnato con il linguaggio indicato.";
+    const randomIndex = (pool && pool.length > 0) ? Math.floor(Math.random() * pool.length) : 0;
+    const challengeText = (pool && pool[randomIndex]) ? pool[randomIndex] : "Spiega l'argomento assegnato con il linguaggio indicato.";
 
     this.currentCard = {
       category: category,
@@ -482,7 +526,9 @@ const App = {
     return session;
   },
 
-  openSavedGamesModal() {
+  async openSavedGamesModal() {
+    const isAllowed = await this.verifyEcosystemAccess(false);
+    if (!isAllowed) return;
     this.renderSavedGamesList();
     const modal = document.getElementById('savedGamesModal');
     if (modal) {
@@ -874,49 +920,60 @@ const App = {
     if (window.GeoMiniguidaService && window.GeoMiniguidaService.renderAdminEditor) {
       window.GeoMiniguidaService.renderAdminEditor('geo-miniguida-admin-container');
     }
+    if (window.GeoCardsService && window.GeoCardsService.renderAdminUI) {
+      window.GeoCardsService.renderAdminUI('geo-cards-admin-container');
+    }
   },
 
   switchAdminTab(tab) {
     const rulesBtn = document.getElementById('btn-tab-geo-rules');
     const miniBtn = document.getElementById('btn-tab-geo-miniguida');
+    const cardsBtn = document.getElementById('btn-tab-geo-cards');
     const rulesContent = document.getElementById('geo-rules-tab-content');
     const miniContent = document.getElementById('geo-miniguida-tab-content');
+    const cardsContent = document.getElementById('geo-cards-tab-content');
+
+    const resetBtnStyle = (btn) => {
+      if (!btn) return;
+      btn.classList.remove('active');
+      btn.style.background = '#f1f5f9';
+      btn.style.color = '#475569';
+      btn.style.borderColor = 'transparent';
+    };
+
+    const setActiveBtnStyle = (btn) => {
+      if (!btn) return;
+      btn.classList.add('active');
+      btn.style.background = 'var(--accent-geo)';
+      btn.style.color = '#fff';
+      btn.style.borderColor = 'var(--accent-geo)';
+    };
+
+    resetBtnStyle(rulesBtn);
+    resetBtnStyle(miniBtn);
+    resetBtnStyle(cardsBtn);
+
+    if (rulesContent) rulesContent.style.display = 'none';
+    if (miniContent) miniContent.style.display = 'none';
+    if (cardsContent) cardsContent.style.display = 'none';
 
     if (tab === 'rules') {
-      if (rulesBtn) {
-        rulesBtn.classList.add('active');
-        rulesBtn.style.background = 'var(--accent-geo)';
-        rulesBtn.style.color = '#fff';
-        rulesBtn.style.borderColor = 'var(--accent-geo)';
-      }
-      if (miniBtn) {
-        miniBtn.classList.remove('active');
-        miniBtn.style.background = '#f1f5f9';
-        miniBtn.style.color = '#475569';
-        miniBtn.style.borderColor = 'transparent';
-      }
+      setActiveBtnStyle(rulesBtn);
       if (rulesContent) rulesContent.style.display = 'block';
-      if (miniContent) miniContent.style.display = 'none';
       if (window.RulesService && window.RulesService.renderAdminEditor) {
         window.RulesService.renderAdminEditor('geo-rules-admin-container');
       }
     } else if (tab === 'miniguida') {
-      if (miniBtn) {
-        miniBtn.classList.add('active');
-        miniBtn.style.background = 'var(--accent-geo)';
-        miniBtn.style.color = '#fff';
-        miniBtn.style.borderColor = 'var(--accent-geo)';
-      }
-      if (rulesBtn) {
-        rulesBtn.classList.remove('active');
-        rulesBtn.style.background = '#f1f5f9';
-        rulesBtn.style.color = '#475569';
-        rulesBtn.style.borderColor = 'transparent';
-      }
-      if (rulesContent) rulesContent.style.display = 'none';
+      setActiveBtnStyle(miniBtn);
       if (miniContent) miniContent.style.display = 'block';
       if (window.GeoMiniguidaService && window.GeoMiniguidaService.renderAdminEditor) {
         window.GeoMiniguidaService.renderAdminEditor('geo-miniguida-admin-container');
+      }
+    } else if (tab === 'cards') {
+      setActiveBtnStyle(cardsBtn);
+      if (cardsContent) cardsContent.style.display = 'block';
+      if (window.GeoCardsService && window.GeoCardsService.renderAdminUI) {
+        window.GeoCardsService.renderAdminUI('geo-cards-admin-container');
       }
     }
   },
