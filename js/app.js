@@ -88,13 +88,19 @@ const App = {
     }
     const currentUser = this.currentUser || (typeof firebase !== 'undefined' && firebase.auth && firebase.auth().currentUser) || null;
     let currentRole = 'guest';
-    if (currentUser) {
-      currentRole = this.isSuperAdminUser() ? 'admin' : 'docente';
+    const ssoRole = (localStorage.getItem('hub_user_role') || '').toLowerCase();
+    if (this.isSuperAdminUser()) {
+      currentRole = 'admin';
+    } else if (ssoRole.includes('docente') || ssoRole === 'teacher') {
+      currentRole = 'docente';
+    } else if (ssoRole.includes('viandante') || ssoRole.includes('amico') || ssoRole.includes('forestiero')) {
+      currentRole = 'viandante';
+    } else if (ssoRole.includes('studente') || ssoRole === 'student') {
+      currentRole = 'studente';
+    } else if (currentUser) {
+      currentRole = 'docente';
     } else {
-      const ssoRole = (localStorage.getItem('hub_user_role') || '').toLowerCase();
-      if (ssoRole === 'docente' || ssoRole === 'admin') currentRole = ssoRole;
-      else if (ssoRole === 'studente') currentRole = 'studente';
-      else currentRole = 'guest';
+      currentRole = 'guest';
     }
     return await window.HubSubscriptionGuard.verifyAccess({
       user: currentUser,
