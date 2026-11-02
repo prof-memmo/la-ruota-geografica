@@ -113,7 +113,7 @@ const App = {
   },
 
   async showView(viewId) {
-    const isPublic = ['view-welcome', 'view-regolamento'].includes(viewId);
+    const isPublic = ['view-welcome', 'view-regolamento', 'view-tabellone'].includes(viewId);
     if (!isPublic) {
       const isAllowed = await this.verifyEcosystemAccess(false);
       if (!isAllowed) {
