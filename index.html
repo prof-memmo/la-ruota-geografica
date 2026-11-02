@@ -197,7 +197,7 @@
         </p>
 
         <div class="mode-pills-row">
-          <div class="mode-pill"><i class="fa-solid fa-users" style="color: var(--accent-geo);"></i> Sfida a Squadre</div>
+          <div class="mode-pill"><i class="fa-solid fa-user-group" style="color: var(--accent-geo);"></i> Singolo o Squadre (2-4)</div>
           <div class="mode-pill"><i class="fa-solid fa-compass" style="color: #06b6d4;"></i> 5 Percorsi Tematici</div>
           <div class="mode-pill"><i class="fa-solid fa-palette" style="color: #8b5cf6;"></i> 8 Linguaggi Espressivi</div>
           <div class="mode-pill"><i class="fa-solid fa-stopwatch" style="color: var(--accent-gold);"></i> Timer 1 Minuto</div>
@@ -215,7 +215,65 @@
     </section>
 
     <!-- ==========================================
-         2. VIEW: SCELTA PERCORSO TEMATICO (Passo 1 di 2 Stile HistoryGram)
+         2A. VIEW: SCELTA MODALITÀ DI GIOCO (Passo 1 di 2)
+         ========================================== -->
+    <section id="view-setup-mode" class="app-view hidden">
+      <div class="page-title-box">
+        <h1 class="page-title">Come vuoi giocare?</h1>
+        <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 6px;">Seleziona se giocare in modalità singolo o a squadre</p>
+      </div>
+
+      <div class="setup-choice-grid" style="max-width: 880px;">
+        <!-- Card Giocatore Singolo -->
+        <div class="setup-choice-card" onclick="App.selectGameMode('single')">
+          <div class="setup-choice-icon">👤</div>
+          <h3 class="setup-choice-title">Giocatore Singolo</h3>
+          <p class="setup-choice-desc">Allenamento individuale, studio o ripasso guidato alla LIM.</p>
+          <button class="btn-primary-glow" style="width: auto; padding: 8px 20px; font-size: 0.85rem; pointer-events: none;">
+            Seleziona ➔
+          </button>
+        </div>
+
+        <!-- Card 2 Squadre -->
+        <div class="setup-choice-card" onclick="App.selectGameMode('teams', 2)">
+          <div class="setup-choice-icon">👥</div>
+          <h3 class="setup-choice-title">Sfida a 2 Squadre</h3>
+          <p class="setup-choice-desc">🔴 Squadra 1 &bull; 🔵 Squadra 2</p>
+          <button class="btn-primary-glow" style="width: auto; padding: 8px 20px; font-size: 0.85rem; pointer-events: none;">
+            Seleziona ➔
+          </button>
+        </div>
+
+        <!-- Card 3 Squadre -->
+        <div class="setup-choice-card" onclick="App.selectGameMode('teams', 3)">
+          <div class="setup-choice-icon">👥</div>
+          <h3 class="setup-choice-title">Sfida a 3 Squadre</h3>
+          <p class="setup-choice-desc">🔴 Squadra 1 &bull; 🔵 Squadra 2 &bull; 🟢 Squadra 3</p>
+          <button class="btn-primary-glow" style="width: auto; padding: 8px 20px; font-size: 0.85rem; pointer-events: none;">
+            Seleziona ➔
+          </button>
+        </div>
+
+        <!-- Card 4 Squadre -->
+        <div class="setup-choice-card" onclick="App.selectGameMode('teams', 4)">
+          <div class="setup-choice-icon">👥</div>
+          <h3 class="setup-choice-title">Sfida a 4 Squadre</h3>
+          <p class="setup-choice-desc">🔴 Squadra 1 &bull; 🔵 Squadra 2 &bull; 🟢 Squadra 3 &bull; 🟡 Squadra 4</p>
+          <button class="btn-primary-glow" style="width: auto; padding: 8px 20px; font-size: 0.85rem; pointer-events: none;">
+            Seleziona ➔
+          </button>
+        </div>
+      </div>
+
+      <div style="text-align: center; margin-top: 20px;">
+        <button class="btn-choice" onclick="App.showView('view-welcome')" style="display: inline-flex; width: auto; padding: 10px 24px; font-size: 0.9rem; flex-direction: row; gap: 8px;">
+          <i class="fa-solid fa-arrow-left"></i> Torna alla Home
+        </button>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         2B. VIEW: SCELTA PERCORSO TEMATICO (Passo 2 di 2)
          ========================================== -->
     <section id="view-setup-topic" class="app-view hidden">
       <div class="page-title-box">
@@ -275,8 +333,8 @@
       </div>
 
       <div style="text-align: center; margin-top: 20px;">
-        <button class="btn-choice" onclick="App.showView('view-welcome')" style="display: inline-flex; width: auto; padding: 10px 24px; font-size: 0.9rem; flex-direction: row; gap: 8px;">
-          <i class="fa-solid fa-arrow-left"></i> Torna alla Home
+        <button class="btn-choice" onclick="App.showView('view-setup-mode')" style="display: inline-flex; width: auto; padding: 10px 24px; font-size: 0.9rem; flex-direction: row; gap: 8px;">
+          <i class="fa-solid fa-arrow-left"></i> Torna alla Scelta Modalità
         </button>
       </div>
     </section>
@@ -285,7 +343,7 @@
          3. VIEW: IL GIOCO (DUE RUOTE AFFIANCATE A SCHERMO INTERO)
          ========================================== -->
     <section id="view-game" class="app-view hidden">
-      <!-- Barra Percorso Tematico Attivo -->
+      <!-- Barra Percorso Tematico Attivo & HUD Turno -->
       <div style="background: #ffffff; border: 1px solid var(--border-subtle); border-radius: 16px; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
         <div style="display: flex; align-items: center; gap: 10px;">
           <span id="active-topic-icon" style="font-size: 1.6rem;">🌌</span>
@@ -294,6 +352,17 @@
             <div id="active-topic-sub" style="font-size: 0.78rem; color: var(--text-muted);">Morfologia della Terra e Continenti</div>
           </div>
         </div>
+
+        <!-- HUD Turno Attivo / Giocatore Singolo -->
+        <div id="active-turn-hud" style="display: flex; align-items: center; gap: 10px; background: #f8fafc; border: 1.5px solid var(--border-subtle); border-radius: 12px; padding: 6px 16px;">
+          <span id="active-turn-icon" style="font-size: 1.25rem;">🔴</span>
+          <div>
+            <div id="active-turn-label" style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;">Turno Attivo</div>
+            <div id="active-turn-name" style="font-family: var(--font-heading); font-weight: 800; font-size: 0.95rem; color: #0f172a;">Squadra 1</div>
+          </div>
+          <span id="active-turn-score" style="background: var(--accent-geo); color: #ffffff; border-radius: 20px; padding: 2px 10px; font-size: 0.8rem; font-weight: 700; margin-left: 6px;">0 pt</span>
+        </div>
+
         <div>
           <button class="btn-choice" onclick="App.showView('view-setup-topic')" style="width: auto; padding: 8px 18px; font-size: 0.85rem; flex-direction: row; gap: 6px;">
             <i class="fa-solid fa-repeat"></i> Cambia Argomento
@@ -553,11 +622,14 @@
       </p>
 
       <div style="display: flex; gap: 12px; margin-top: 10px; justify-content: center; flex-wrap: wrap;">
-        <button class="btn-choice" id="btn-timer-toggle" onclick="App.toggleTimer()" style="width: auto; padding: 10px 20px; font-size: 0.9rem; flex-direction: row; gap: 8px;">
+        <button class="btn-choice" id="btn-timer-toggle" onclick="App.toggleTimer()" style="width: auto; padding: 10px 18px; font-size: 0.88rem; flex-direction: row; gap: 8px;">
           <i class="fa-solid fa-play"></i> Avvia Timer (60s)
         </button>
-        <button class="btn-primary-glow" onclick="App.resetTurn()" style="width: auto; padding: 10px 24px; font-size: 0.9rem;">
-          <i class="fa-solid fa-forward-step"></i> Prossimo Turno
+        <button class="btn-primary-glow" onclick="App.awardPointAndNextTurn()" style="width: auto; padding: 10px 20px; font-size: 0.88rem; background: linear-gradient(135deg, #10b981, #059669);">
+          <i class="fa-solid fa-check"></i> Prova Superata (+1 pt)
+        </button>
+        <button class="btn-choice" onclick="App.nextTurnWithoutPoint()" style="width: auto; padding: 10px 18px; font-size: 0.88rem; flex-direction: row; gap: 6px;">
+          <i class="fa-solid fa-forward-step"></i> Passa Turno
         </button>
       </div>
     </div>
