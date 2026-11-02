@@ -926,6 +926,12 @@ button, input, textarea, select, a, span:not([class*="fa-"]), p, h1, h2, h3, h4,
   transition: all 0.2s ease;
 }
 
+.team-score-card.active-turn-row {
+  border-color: var(--accent-geo);
+  background: #f0f9ff;
+  box-shadow: 0 0 0 1.5px var(--accent-geo);
+}
+
 .team-score-card:hover {
   border-color: #cbd5e1;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);

@@ -13,9 +13,11 @@ const App = {
   timerSecondsLeft: 60,
   isTimerRunning: false,
   teams: [
-    { name: "Squadra 1", score: 0 },
-    { name: "Squadra 2", score: 0 }
+    { name: "Squadra 1", score: 0, icon: "🔴", color: "#ef4444" },
+    { name: "Squadra 2", score: 0, icon: "🔵", color: "#3b82f6" }
   ],
+  gameMode: 'teams', // 'single' o 'teams'
+  currentTeamIndex: 0,
   wheelStep: 'choose_mode',
 
   init() {
@@ -38,7 +40,8 @@ const App = {
     // 2. Setup SSO & Header
     this.setupHeaderProfile();
 
-    // 3. Render tabellone squadre
+    // 3. Render tabellone squadre e HUD Turno
+    this.updateTurnHud();
     this.renderScoreboard();
 
     // 4. Resize listener per Retina canvas
@@ -171,6 +174,27 @@ const App = {
   async startSetupFlow() {
     const isAllowed = await this.verifyEcosystemAccess(false);
     if (!isAllowed) return;
+    this.showView('view-setup-mode');
+  },
+
+  selectGameMode(mode, count = 2) {
+    this.gameMode = mode;
+    if (mode === 'single') {
+      this.teams = [
+        { name: "Giocatore Singolo", score: 0, icon: "👤", color: "#0ea5e9" }
+      ];
+    } else {
+      const defaultTeams = [
+        { name: "Squadra 1", score: 0, icon: "🔴", color: "#ef4444" },
+        { name: "Squadra 2", score: 0, icon: "🔵", color: "#3b82f6" },
+        { name: "Squadra 3", score: 0, icon: "🟢", color: "#10b981" },
+        { name: "Squadra 4", score: 0, icon: "🟡", color: "#f59e0b" }
+      ];
+      this.teams = defaultTeams.slice(0, count);
+    }
+    this.currentTeamIndex = 0;
+    this.updateTurnHud();
+    this.renderScoreboard();
     this.showView('view-setup-topic');
   },
 
@@ -193,6 +217,7 @@ const App = {
     if (iconEl) iconEl.textContent = topicData.icon;
 
     this.resetTurn();
+    this.updateTurnHud();
     this.showView('view-game');
     this.saveCurrentGame();
   },
@@ -247,7 +272,12 @@ const App = {
     }
 
     if (this.currentMode.id === 'salta') {
-      alert("⏭ Salta Turno! La squadra perde il turno e passa la mano.");
+      alert("⏭ Salta Turno! Si passa la mano.");
+      if (this.gameMode === 'teams' && this.teams.length > 1) {
+        this.currentTeamIndex = (this.currentTeamIndex + 1) % this.teams.length;
+        this.updateTurnHud();
+        this.saveCurrentGame();
+      }
       this.resetTurn();
       return;
     }
@@ -432,6 +462,54 @@ const App = {
     if (window.WheelEngine) {
       window.WheelEngine.draw();
     }
+    this.updateTurnHud();
+  },
+
+  updateTurnHud() {
+    const turnIcon = document.getElementById('active-turn-icon');
+    const turnLabel = document.getElementById('active-turn-label');
+    const turnName = document.getElementById('active-turn-name');
+    const turnScore = document.getElementById('active-turn-score');
+
+    if (this.gameMode === 'single') {
+      const player = (this.teams && this.teams[0]) ? this.teams[0] : { name: "Giocatore Singolo", score: 0, icon: "👤" };
+      if (turnIcon) turnIcon.textContent = player.icon || "👤";
+      if (turnLabel) turnLabel.textContent = "Modalità";
+      if (turnName) turnName.textContent = player.name;
+      if (turnScore) turnScore.textContent = `${player.score || 0} pt`;
+    } else {
+      const team = (this.teams && this.teams[this.currentTeamIndex]) || (this.teams && this.teams[0]) || { name: "Squadra 1", score: 0, icon: "🔴" };
+      if (turnIcon) turnIcon.textContent = team.icon || "👥";
+      if (turnLabel) turnLabel.textContent = "Turno Attivo";
+      if (turnName) turnName.textContent = team.name;
+      if (turnScore) turnScore.textContent = `${team.score || 0} pt`;
+    }
+  },
+
+  awardPointAndNextTurn() {
+    const activeTeam = (this.teams && this.teams[this.currentTeamIndex]) || (this.teams && this.teams[0]);
+    if (activeTeam) {
+      activeTeam.score = (activeTeam.score || 0) + 1;
+    }
+    if (window.AudioEngine && typeof window.AudioEngine.playWin === 'function') {
+      window.AudioEngine.playWin();
+    }
+    if (this.gameMode === 'teams' && this.teams.length > 1) {
+      this.currentTeamIndex = (this.currentTeamIndex + 1) % this.teams.length;
+    }
+    this.updateTurnHud();
+    this.renderScoreboard();
+    this.saveCurrentGame();
+    this.resetTurn();
+  },
+
+  nextTurnWithoutPoint() {
+    if (this.gameMode === 'teams' && this.teams.length > 1) {
+      this.currentTeamIndex = (this.currentTeamIndex + 1) % this.teams.length;
+    }
+    this.updateTurnHud();
+    this.saveCurrentGame();
+    this.resetTurn();
   },
 
   // Guard safe no-op per retrocompatibilità
@@ -449,10 +527,13 @@ const App = {
     list.innerHTML = '';
 
     this.teams.forEach((t, i) => {
+      const isCurrent = (this.gameMode === 'teams' && i === this.currentTeamIndex);
       const row = document.createElement('div');
-      row.className = 'team-score-card';
+      row.className = 'team-score-card' + (isCurrent ? ' active-turn-row' : '');
       row.innerHTML = `
-        <span class="team-name" contenteditable="true" onblur="App.renameTeam(${i}, this.textContent)">${t.name}</span>
+        <span class="team-name" contenteditable="true" onblur="App.renameTeam(${i}, this.textContent)">
+          ${t.icon ? `<span style="margin-right: 6px;">${t.icon}</span>` : ''}${t.name}
+        </span>
         <div class="team-score-controls">
           <button class="score-btn" onclick="App.addScore(${i}, -1)">-</button>
           <span class="score-val">${t.score}</span>
@@ -465,7 +546,9 @@ const App = {
 
   addTeam() {
     const num = this.teams.length + 1;
-    this.teams.push({ name: `Squadra ${num}`, score: 0 });
+    const icons = ['🔴', '🔵', '🟢', '🟡', '🟣', '🟠'];
+    const icon = icons[(num - 1) % icons.length];
+    this.teams.push({ name: `Squadra ${num}`, score: 0, icon: icon });
     this.renderScoreboard();
     this.saveCurrentGame();
   },
@@ -473,14 +556,16 @@ const App = {
   addScore(teamIndex, delta) {
     if (this.teams[teamIndex]) {
       this.teams[teamIndex].score = Math.max(0, this.teams[teamIndex].score + delta);
+      this.updateTurnHud();
       this.renderScoreboard();
       this.saveCurrentGame();
     }
   },
 
   resetScores() {
-    if (confirm("Vuoi davvero azzerare i punteggi di tutte le squadre?")) {
+    if (confirm("Vuoi davvero azzerare i punteggi?")) {
       this.teams.forEach(t => t.score = 0);
+      this.updateTurnHud();
       this.renderScoreboard();
       this.saveCurrentGame();
     }
@@ -520,6 +605,8 @@ const App = {
       topic: this.currentTopic,
       topicTitle: topicObj.title,
       topicIcon: topicObj.icon,
+      gameMode: this.gameMode || 'teams',
+      currentTeamIndex: this.currentTeamIndex || 0,
       teams: JSON.parse(JSON.stringify(this.teams))
     };
 
@@ -557,9 +644,11 @@ const App = {
     if (!session) return;
 
     this.currentTopic = session.topic || 'astronomia';
+    this.gameMode = session.gameMode || (session.teams && session.teams.length === 1 ? 'single' : 'teams');
+    this.currentTeamIndex = session.currentTeamIndex || 0;
     this.teams = session.teams || [
-      { name: "Squadra 1", score: 0 },
-      { name: "Squadra 2", score: 0 }
+      { name: "Squadra 1", score: 0, icon: "🔴", color: "#ef4444" },
+      { name: "Squadra 2", score: 0, icon: "🔵", color: "#3b82f6" }
     ];
 
     const topicObj = (window.THEMATIC_TOPICS || []).find(t => t.id === this.currentTopic);
@@ -570,6 +659,7 @@ const App = {
     if (subEl && topicObj) subEl.textContent = topicObj.subtitle;
     if (iconEl && topicObj) iconEl.textContent = topicObj.icon;
 
+    this.updateTurnHud();
     this.renderScoreboard();
     this.closeSavedGamesModal();
     this.showView('view-game');
