@@ -19,6 +19,7 @@ const App = {
   gameMode: 'teams', // 'single' o 'teams'
   currentTeamIndex: 0,
   wheelStep: 'choose_mode',
+  currentSessionId: null,
 
   init() {
     console.log("🌍 Inizializzazione de La Ruota Geografica...");
@@ -179,6 +180,7 @@ const App = {
 
   selectGameMode(mode, count = 2) {
     this.gameMode = mode;
+    this.currentSessionId = null;
     if (mode === 'single') {
       this.teams = [
         { name: "Giocatore Singolo", score: 0, icon: "👤", color: "#0ea5e9" }
@@ -202,6 +204,7 @@ const App = {
     const isAllowed = await this.verifyEcosystemAccess(false);
     if (!isAllowed) return;
     this.currentTopic = topicId;
+    this.currentSessionId = 'session_' + Date.now();
     const topicData = (window.THEMATIC_TOPICS || []).find(t => t.id === topicId) || {
       title: 'Geografia Generale',
       subtitle: "La Terra, il clima e l'uomo",
@@ -598,8 +601,11 @@ const App = {
 
   saveCurrentGame() {
     const topicObj = (window.THEMATIC_TOPICS || []).find(t => t.id === this.currentTopic) || { title: 'Geografia Generale', icon: '🌌' };
+    if (!this.currentSessionId) {
+      this.currentSessionId = 'session_' + Date.now();
+    }
     const session = {
-      id: 'session_' + Date.now(),
+      id: this.currentSessionId,
       timestamp: Date.now(),
       dateStr: new Date().toLocaleDateString('it-IT', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }),
       topic: this.currentTopic,
@@ -643,6 +649,7 @@ const App = {
     const session = list.find(s => s.id === sessionId);
     if (!session) return;
 
+    this.currentSessionId = session.id;
     this.currentTopic = session.topic || 'astronomia';
     this.gameMode = session.gameMode || (session.teams && session.teams.length === 1 ? 'single' : 'teams');
     this.currentTeamIndex = session.currentTeamIndex || 0;
@@ -668,6 +675,9 @@ const App = {
   deleteSavedGame(sessionId, e) {
     if (e) e.stopPropagation();
     if (!confirm("Vuoi davvero eliminare questa sessione salvata?")) return;
+    if (this.currentSessionId === sessionId) {
+      this.currentSessionId = null;
+    }
     const list = this.getSavedGames().filter(s => s.id !== sessionId);
     try {
       localStorage.setItem(this.savedGamesKey, JSON.stringify(list));
