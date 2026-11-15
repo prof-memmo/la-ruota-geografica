@@ -1295,6 +1295,40 @@ h3 {
 }
 
 @media (max-width: 768px) {
+  .app-header {
+    height: 60px;
+    padding: 0 10px;
+  }
+  .header-left {
+    gap: 6px;
+  }
+  .header-game-logo {
+    height: 32px;
+    max-width: 110px;
+    object-fit: contain;
+  }
+  .header-prof-logo {
+    height: 32px;
+    width: 32px;
+  }
+  .user-menu-trigger {
+    padding: 3px 8px 3px 4px;
+    gap: 6px;
+  }
+  .user-avatar-circle {
+    width: 28px;
+    height: 28px;
+  }
+  .user-trigger-name {
+    font-size: 0.72rem;
+    max-width: 80px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .user-trigger-role {
+    font-size: 0.55rem;
+  }
   .hide-mobile {
     display: none !important;
   }
