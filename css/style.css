@@ -72,6 +72,21 @@ button, input, textarea, select, a, span:not([class*="fa-"]), p, h1, h2, h3, h4,
   font-family: 'Julius Sans One', sans-serif;
 }
 
+h1 {
+  font-size: clamp(1.35rem, 4.2vw, 2rem);
+  line-height: 1.25;
+}
+
+h2 {
+  font-size: clamp(1.15rem, 3.6vw, 1.6rem);
+  line-height: 1.3;
+}
+
+h3 {
+  font-size: clamp(0.95rem, 2.8vw, 1.25rem);
+  line-height: 1.35;
+}
+
 .hidden, [hidden] {
   display: none !important;
 }
@@ -998,10 +1013,11 @@ button, input, textarea, select, a, span:not([class*="fa-"]), p, h1, h2, h3, h4,
 
 .page-title {
   font-family: var(--font-heading);
-  font-size: 2rem;
+  font-size: clamp(1.25rem, 4.2vw, 2rem);
   font-weight: 800;
   color: #0f172a;
   margin-bottom: 8px;
+  line-height: 1.3;
 }
 
 .page-subtitle {
