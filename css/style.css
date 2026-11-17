@@ -1277,6 +1277,7 @@ h3 {
   max-width: 900px;
   margin: 0 auto;
   text-align: left;
+  flex-wrap: wrap;
 }
 
 .patamu-footer-badge {
@@ -1326,6 +1327,56 @@ h3 {
   }
   .hide-mobile {
     display: none !important;
+  }
+
+  /* Miniguida Modal Responsive */
+  #modalMiniguida {
+    padding: 10px !important;
+  }
+  #modalMiniguida .app-modal-content {
+    max-height: 88dvh !important;
+    border-radius: 18px !important;
+  }
+  .miniguida-content-col {
+    padding: 24px 16px 16px 16px !important;
+    min-height: auto !important;
+  }
+  #modalMiniguida h2 {
+    font-size: 1.4rem !important;
+    margin-bottom: 12px !important;
+  }
+  #miniguida-icon {
+    font-size: 3rem !important;
+    margin-bottom: 10px !important;
+  }
+  #miniguida-step-desc {
+    font-size: 0.92rem !important;
+    line-height: 1.45 !important;
+  }
+  .miniguida-footer-row {
+    flex-wrap: wrap !important;
+    gap: 12px !important;
+    justify-content: center !important;
+    margin-top: 15px !important;
+    padding-top: 12px !important;
+  }
+  #miniguida-counter {
+    width: 100% !important;
+    text-align: center !important;
+  }
+  .miniguida-footer-row div:last-child {
+    width: 100% !important;
+    justify-content: center !important;
+    display: flex !important;
+    gap: 10px !important;
+  }
+  #miniguida-prev-btn, #miniguida-next-btn {
+    flex: 1 !important;
+    max-width: 140px !important;
+    text-align: center !important;
+    padding: 10px 16px !important;
+    font-size: 0.88rem !important;
+    justify-content: center !important;
   }
 }
 
